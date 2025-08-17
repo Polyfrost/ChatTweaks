@@ -1,0 +1,12 @@
+{
+  "compatibilityLevel": "${java_version}",
+  "minVersion": "0.8",
+  "package": "org.polyfrost.chattweaks",
+  "refmap": "mixins.${mod_id}.refmap.json",
+  "injectors": {
+    "maxShiftBy": 5
+  },
+  "client": [
+  ],
+  "verbose": true
+}

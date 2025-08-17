@@ -1,0 +1,27 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
+  "authors": [
+    "Polyfrost"
+  ],
+  "contributors": [
+    "awruff"
+  ],
+  "environment": "client",
+  "entrypoints": {
+    "main": [
+      {
+        "value": "org.polyfrost.chattweaks.ChatTweaks"
+      }
+    ]
+  },
+  "mixins": [
+    "mixins.${mod_id}.json"
+  ],
+  "depends": {
+    "minecraft": "~${minor_mc_version}",
+    "fabricloader": ">=0.15.11"
+  }
+}
