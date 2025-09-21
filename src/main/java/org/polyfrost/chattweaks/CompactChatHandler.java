@@ -31,7 +31,7 @@ public class CompactChatHandler {
     public static int currentMessageHash = -1;
     private int ticks;
 
-    @Subscribe(priority = -1)
+    @Subscribe(priority = Integer.MIN_VALUE)
     public void onChatMessage(ChatEvent.Receive event) {
         if (!ChatTweaks.config.timestamps || event.getFullyUnformattedMessage().trim().isEmpty()) {
             return;
