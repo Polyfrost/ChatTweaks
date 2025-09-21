@@ -64,4 +64,10 @@ public class ChatTweaksConfig extends Config {
     )
     public boolean secondsOnTimestamps;
 
+
+    @Switch(
+            title = "Shift Chat",
+            description = "Keep chat open while sending a message if Shift is held while pressing Enter."
+    )
+    public boolean shiftChat;
 }
