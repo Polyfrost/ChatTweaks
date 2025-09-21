@@ -40,7 +40,7 @@ public class ChatTweaks
     ) {
         config = new ChatTweaksConfig();
         EventManager.INSTANCE.register(this);
-        EventManager.INSTANCE.register(CompactChatHandler.class);
+        EventManager.INSTANCE.register(new CompactChatHandler());
     }
 
     @Subscribe
