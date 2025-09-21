@@ -70,4 +70,17 @@ public class ChatTweaksConfig extends Config {
             description = "Keep chat open while sending a message if Shift is held while pressing Enter."
     )
     public boolean shiftChat;
+
+
+    @Switch(
+            title = "Safe Chat Clicks",
+            description = "Show the command or link that is run/opened on click. "
+    )
+    public boolean safeChatClicks;
+
+    @Switch(
+            title = "Safe Chat Clicks History",
+            description = "Adds commands sent from clicking chat messages to the chat history."
+    )
+    public boolean safeChatClicksHistory;
 }

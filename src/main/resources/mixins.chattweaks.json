@@ -9,7 +9,11 @@
   "client": [
     "GuiChatMixin",
     "GuiNewChatAccessor",
-    "GuiNewChatMixin"
+    "GuiNewChatMixin",
+    "GuiScreenMixin"
   ],
-  "verbose": true
+  "verbose": true,
+  "mixins": [
+    "ChatStyleMixin"
+  ]
 }
