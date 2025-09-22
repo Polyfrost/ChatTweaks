@@ -1,6 +1,6 @@
 package org.polyfrost.chattweaks;
 
-import dev.deftu.omnicore.common.OmniLoader;
+import dev.deftu.omnicore.api.loader.OmniLoader;
 import dev.deftu.textile.TextHolder;
 import dev.deftu.textile.minecraft.MCTextHolder;
 import net.minecraft.client.Minecraft;
@@ -96,7 +96,7 @@ public class CompactChatHandler {
     }
 
     public static void appendMessageCounter(IChatComponent chatComponent, boolean refresh) {
-        if ((OmniLoader.isModLoaded("hychat") || OmniLoader.isModLoaded("labymod")) || !ChatTweaks.config.compactChat || refresh) {
+        if ((OmniLoader.isLoaded("hychat") || OmniLoader.isLoaded("labymod")) || !ChatTweaks.config.compactChat || refresh) {
             return;
         }
 

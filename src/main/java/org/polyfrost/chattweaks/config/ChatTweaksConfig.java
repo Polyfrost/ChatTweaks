@@ -83,4 +83,19 @@ public class ChatTweaksConfig extends Config {
             description = "Adds commands sent from clicking chat messages to the chat history."
     )
     public boolean safeChatClicksHistory;
+
+
+    @Switch(
+            title = "Image Preview",
+            description = "Preview image links when hovering over a supported URL." +
+                    "\nPress Shift to use fullscreen and Control to render in native image resolution."
+    )
+    public boolean imagePreview = true;
+
+    @Slider(
+            title = "Image Preview Width",
+            description = "The %% of screen width to be used for image preview.",
+            min = 0F, max = 1F
+    )
+    public float imagePreviewWidth = 0.50F;
 }

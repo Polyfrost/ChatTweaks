@@ -41,6 +41,7 @@ public class ChatTweaks
         config = new ChatTweaksConfig();
         EventManager.INSTANCE.register(this);
         EventManager.INSTANCE.register(new CompactChatHandler());
+        EventManager.INSTANCE.register(new ImagePreview());
     }
 
     @Subscribe
