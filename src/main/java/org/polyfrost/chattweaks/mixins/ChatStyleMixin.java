@@ -6,7 +6,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
 import org.polyfrost.chattweaks.ChatTweaks;
-import org.polyfrost.chattweaks.CompactChatHandler;
+import org.polyfrost.chattweaks.features.CompactChatHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Overwrite;
 import org.spongepowered.asm.mixin.Shadow;

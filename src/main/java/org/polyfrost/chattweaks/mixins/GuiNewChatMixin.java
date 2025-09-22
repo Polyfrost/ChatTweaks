@@ -3,7 +3,7 @@ package org.polyfrost.chattweaks.mixins;
 import net.minecraft.client.gui.ChatLine;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.IChatComponent;
-import org.polyfrost.chattweaks.CompactChatHandler;
+import org.polyfrost.chattweaks.features.CompactChatHandler;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;

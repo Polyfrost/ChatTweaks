@@ -1,4 +1,4 @@
-package org.polyfrost.chattweaks;
+package org.polyfrost.chattweaks.features;
 
 import dev.deftu.omnicore.api.loader.OmniLoader;
 import dev.deftu.textile.TextHolder;
@@ -9,6 +9,7 @@ import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentStyle;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
+import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.mixins.GuiNewChatAccessor;
 import org.polyfrost.oneconfig.api.event.v1.events.ChatEvent;
 import org.polyfrost.oneconfig.api.event.v1.events.TickEvent;
@@ -47,14 +48,14 @@ public class CompactChatHandler {
             queue.add(event.getMessage());
 
             while (!queue.isEmpty()) {
-                TextHolder<?, ?> component = queue.remove();
-                List<TextHolder<?, ?>> siblings = component.getChildren();
+                TextHolder<?, ?> textHolder = queue.remove();
+                List<TextHolder<?, ?>> siblings = textHolder.getChildren();
 
                 if (siblings.isEmpty()) {
-                    IChatComponent nonSchizoComponent = MCTextHolder.convertToVanilla(component);
-                    HoverEvent hoverEvent = nonSchizoComponent.getChatStyle().getChatHoverEvent();
+                    IChatComponent component = MCTextHolder.convertToVanilla(textHolder);
+                    HoverEvent hoverEvent = component.getChatStyle().getChatHoverEvent();
                     if (hoverEvent == null) {
-                        nonSchizoComponent.getChatStyle().setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+                        component.getChatStyle().setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                                 new ChatComponentIgnored("§7Sent at §e" + time + "§7.")));
                     } else {
                         IChatComponent value = hoverEvent.getValue();
@@ -62,7 +63,7 @@ public class CompactChatHandler {
                         value.appendText("§7Sent at §e" + time + "§7.");
                     }
                 } else {
-                    queue.addAll(component.getChildren());
+                    queue.addAll(textHolder.getChildren());
                 }
             }
         }

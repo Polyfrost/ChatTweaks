@@ -10,6 +10,8 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 
 import org.apache.commons.lang3.StringUtils;
 import org.polyfrost.chattweaks.config.ChatTweaksConfig;
+import org.polyfrost.chattweaks.features.CompactChatHandler;
+import org.polyfrost.chattweaks.features.ImagePreview;
 import org.polyfrost.oneconfig.api.event.v1.EventManager;
 import org.polyfrost.oneconfig.api.event.v1.events.ChatEvent;
 import org.polyfrost.oneconfig.api.event.v1.invoke.impl.Subscribe;

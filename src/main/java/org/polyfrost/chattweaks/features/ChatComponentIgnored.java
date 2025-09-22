@@ -1,4 +1,4 @@
-package org.polyfrost.chattweaks;
+package org.polyfrost.chattweaks.features;
 
 import net.minecraft.util.ChatComponentText;
 

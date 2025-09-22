@@ -1,4 +1,4 @@
-package org.polyfrost.chattweaks;
+package org.polyfrost.chattweaks.features;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
@@ -15,8 +15,8 @@ import org.apache.commons.io.IOUtils;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.oneconfig.api.event.v1.events.RenderEvent;
-import org.polyfrost.oneconfig.api.event.v1.events.TickEvent;
 import org.polyfrost.oneconfig.api.event.v1.invoke.impl.Subscribe;
 
 import java.awt.image.BufferedImage;
