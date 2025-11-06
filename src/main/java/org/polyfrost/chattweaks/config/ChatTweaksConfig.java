@@ -9,6 +9,8 @@ import org.polyfrost.oneconfig.api.config.v1.annotations.Switch;
 public class ChatTweaksConfig extends Config {
     public ChatTweaksConfig() {
         super(ChatTweaks.ID + ".json", ChatTweaks.NAME, Category.QOL);
+
+        loadFrom("patcher.toml");
     }
 
     @Switch(
