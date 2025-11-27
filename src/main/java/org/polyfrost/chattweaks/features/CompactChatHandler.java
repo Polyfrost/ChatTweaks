@@ -1,8 +1,8 @@
 package org.polyfrost.chattweaks.features;
 
 import dev.deftu.omnicore.api.loader.OmniLoader;
-import dev.deftu.textile.TextHolder;
-import dev.deftu.textile.minecraft.MCTextHolder;
+import dev.deftu.textile.Text;
+import dev.deftu.textile.minecraft.MCText;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ChatLine;
 import net.minecraft.event.HoverEvent;
@@ -41,18 +41,18 @@ public class CompactChatHandler {
         String time = getCurrentTime();
         if (ChatTweaks.config.timestampsStyle == 0) {
             ChatComponentIgnored component = new ChatComponentIgnored("§7[" + time + "] §r");
-            component.appendSibling(MCTextHolder.convertToVanilla(event.getMessage()));
-            event.setMessage(MCTextHolder.convertFromVanilla(component));
+            component.appendSibling(MCText.convert(event.getMessage()));
+            event.setMessage(MCText.wrap(component));
         } else if (ChatTweaks.config.timestampsStyle == 1) {
-            LinkedList<TextHolder<?, ?>> queue = new LinkedList<>();
+            LinkedList<Text> queue = new LinkedList<>();
             queue.add(event.getMessage());
 
             while (!queue.isEmpty()) {
-                TextHolder<?, ?> textHolder = queue.remove();
-                List<TextHolder<?, ?>> siblings = textHolder.getChildren();
+                Text textHolder = queue.remove();
+                List<Text> siblings = textHolder.getSiblings();
 
                 if (siblings.isEmpty()) {
-                    IChatComponent component = MCTextHolder.convertToVanilla(textHolder);
+                    IChatComponent component = MCText.convert(textHolder);
                     HoverEvent hoverEvent = component.getChatStyle().getChatHoverEvent();
                     if (hoverEvent == null) {
                         component.getChatStyle().setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
@@ -63,7 +63,7 @@ public class CompactChatHandler {
                         value.appendText("§7Sent at §e" + time + "§7.");
                     }
                 } else {
-                    queue.addAll(textHolder.getChildren());
+                    queue.addAll(textHolder.getSiblings());
                 }
             }
         }
