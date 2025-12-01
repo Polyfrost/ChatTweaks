@@ -43,6 +43,12 @@ public class CompactChatHandler {
             ChatComponentIgnored component = new ChatComponentIgnored("§7[" + time + "] §r");
             component.appendSibling(MCText.convert(event.getMessage()));
             event.setMessage(MCText.wrap(component));
+            System.out.println(event.getMessage());
+            System.out.println(MCText.convert(event.getMessage()));
+
+            event.cancelled = true;
+            mc.ingameGUI.getChatGUI().printChatMessage(component);
+            //event.setMessage(MCText.wrap(component));
         } else if (ChatTweaks.config.timestampsStyle == 1) {
             LinkedList<Text> queue = new LinkedList<>();
             queue.add(event.getMessage());
