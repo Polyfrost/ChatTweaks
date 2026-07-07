@@ -1,0 +1,17 @@
+{
+  "compatibilityLevel": "${java}",
+  "minVersion": "0.8",
+  "package": "org.polyfrost.chattweaks.mixins",
+  "injectors": {
+    "maxShiftBy": 5
+  },
+  "client": [
+    "ChatComponentMixin",
+    "ChatHoverMixin",
+    "ChatScreenMixin",
+    "GuiMixin",
+    "ScreenMixin",
+    "StyleMixin"
+  ],
+  "verbose": true
+}

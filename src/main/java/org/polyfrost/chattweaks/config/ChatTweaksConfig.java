@@ -82,15 +82,6 @@ public class ChatTweaksConfig extends Config {
     )
     public boolean shiftChat;
 
-    @Slider(
-            title = "Chat Delay",
-            description = "Delay chat messages if they're sent within the selected timeframe after the previous message. Measured in seconds.",
-            subcategory = "QOL",
-            min = 0, max = 6, step = 1
-    )
-    public int chatDelay = 0;
-
-
     @Switch(
             title = "Safe Chat Clicks",
             description = "Show the command or link that is run/opened on click. ",
