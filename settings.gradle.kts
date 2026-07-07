@@ -1,45 +1,31 @@
-@file:Suppress("PropertyName")
-
-import groovy.lang.MissingPropertyException
-
 pluginManagement {
     repositories {
-        maven("https://maven.deftu.dev/releases")
-        maven("https://maven.fabricmc.net")
-        maven("https://maven.architectury.dev/")
-        maven("https://maven.minecraftforge.net")
-        maven("https://repo.essential.gg/repository/maven-public")
-        maven("https://server.bbkr.space/artifactory/libs-release/")
-        maven("https://jitpack.io/")
-
-        maven("https://maven.deftu.dev/snapshots")
-        mavenLocal()
-
-        gradlePluginPortal()
         mavenCentral()
+        gradlePluginPortal()
+        maven("https://maven.fabricmc.net")
+        maven("https://maven.kikugie.dev/snapshots")
+        maven("https://maven.kikugie.dev/releases")
+        maven("https://jitpack.io/")
+        maven("https://maven.deftu.dev/releases")
+        maven("https://maven.deftu.dev/snapshots")
+        maven("https://maven.architectury.dev")
+        maven("https://repo.polyfrost.org/releases")
+        maven("https://repo.polyfrost.org/snapshots")
+        mavenLocal()
     }
+}
 
-    plugins {
-        kotlin("jvm") version("2.0.20")
-        id("dev.deftu.gradle.multiversion-root") version("2.51.0")
+plugins {
+    id("dev.kikugie.stonecutter") version "0.9.6"
+    id("dev.kikugie.loom-back-compat") version "0.3"
+    id("org.gradle.toolchains.foojay-resolver-convention") version "1.0.0"
+}
+
+stonecutter {
+    create(rootProject) {
+        versions("1.21.1", "1.21.4", "1.21.5", "1.21.8", "1.21.10", "1.21.11", "26.1", "26.2")
+        vcsVersion = "26.2"
     }
 }
 
-val projectName: String = extra["mod.name"]?.toString()
-    ?: throw MissingPropertyException("mod.name has not been set.")
-
-rootProject.name = projectName
-rootProject.buildFileName = "root.gradle.kts"
-
-listOf(
-    "1.8.9-forge",
-    "1.8.9-fabric",
-    "1.12.2-forge",
-    "1.12.2-fabric",
-).forEach { version ->
-    include(":$version")
-    project(":$version").apply {
-        projectDir = file("versions/$version")
-        buildFileName = "../../build.gradle.kts"
-    }
-}
+rootProject.name = "SoundTweaks"
