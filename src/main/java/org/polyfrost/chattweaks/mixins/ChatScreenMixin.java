@@ -20,23 +20,21 @@ public abstract class ChatScreenMixin {
     public abstract void handleChatInput(String message, boolean addToRecentChat);
 
     //? if >=1.21.10 {
-    // @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
-    // private void chattweaks$shiftChat(net.minecraft.client.input.KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
-    //     int keyCode = event.key();
-    //     if (ChatTweaks.config.shiftChat && event.hasShiftDown() && (keyCode == 257 || keyCode == 335)) {
-    //         handleChatInput(input.getValue(), true);
-    //         input.setValue("");
-    //         cir.setReturnValue(true);
-    //     }
-    // }
-    //?} else {
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
+    private void chattweaks$shiftChat(net.minecraft.client.input.KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
+    //?} else {
+    /*@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
     private void chattweaks$shiftChat(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
-        if (ChatTweaks.config.shiftChat && Screen.hasShiftDown() && (keyCode == 257 || keyCode == 335)) {
+    *///?}
+        var shiftDown = /*?if >= 1.21.10 {*/ event.hasShiftDown(); /*?} else*/ //Screen.hasShiftDown();
+
+        //? if >= 1.21.10
+        int keyCode = event.key();
+
+        if (ChatTweaks.config.shiftChat && shiftDown && (keyCode == 257 || keyCode == 335)) {
             handleChatInput(input.getValue(), true);
             input.setValue("");
             cir.setReturnValue(true);
         }
     }
-    //?}
 }

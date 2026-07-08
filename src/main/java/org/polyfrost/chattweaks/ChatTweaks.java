@@ -1,6 +1,7 @@
 package org.polyfrost.chattweaks;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.loader.api.FabricLoader;
 import org.polyfrost.chattweaks.config.ChatTweaksConfig;
 
 public class ChatTweaks implements ClientModInitializer {
