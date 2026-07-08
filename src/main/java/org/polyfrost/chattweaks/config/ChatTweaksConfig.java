@@ -82,15 +82,6 @@ public class ChatTweaksConfig extends Config {
     )
     public boolean shiftChat;
 
-    @Slider(
-            title = "Chat Delay",
-            description = "Delay chat messages if they're sent within the selected timeframe after the previous message. Measured in seconds.",
-            subcategory = "QOL",
-            min = 0, max = 6, step = 1
-    )
-    public int chatDelay = 0;
-
-
     @Switch(
             title = "Safe Chat Clicks",
             description = "Show the command or link that is run/opened on click. ",
@@ -106,19 +97,19 @@ public class ChatTweaksConfig extends Config {
     public boolean safeChatClicksHistory;
 
 
-    @Switch(
-            title = "Image Preview",
-            description = "Preview image links when hovering over a supported URL." +
-                    "\nPress Shift to use fullscreen and Control to render in native image resolution.",
-            subcategory = "Image Preview"
-    )
-    public boolean imagePreview = true;
-
-    @Slider(
-            title = "Image Preview Width",
-            description = "The %% of screen width to be used for image preview.",
-            subcategory = "Image Preview",
-            min = 0F, max = 1F
-    )
-    public float imagePreviewWidth = 0.50F;
+//    @Switch(
+//            title = "Image Preview",
+//            description = "Preview image links when hovering over a supported URL." +
+//                    "\nPress Shift to use fullscreen and Control to render in native image resolution.",
+//            subcategory = "Image Preview"
+//    )
+//    public boolean imagePreview = true;
+//
+//    @Slider(
+//            title = "Image Preview Width",
+//            description = "The %% of screen width to be used for image preview.",
+//            subcategory = "Image Preview",
+//            min = 0F, max = 1F
+//    )
+//    public float imagePreviewWidth = 0.50F;
 }
