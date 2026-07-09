@@ -97,19 +97,18 @@ public class ChatTweaksConfig extends Config {
     public boolean safeChatClicksHistory;
 
 
-//    @Switch(
-//            title = "Image Preview",
-//            description = "Preview image links when hovering over a supported URL." +
-//                    "\nPress Shift to use fullscreen and Control to render in native image resolution.",
-//            subcategory = "Image Preview"
-//    )
-//    public boolean imagePreview = true;
-//
-//    @Slider(
-//            title = "Image Preview Width",
-//            description = "The %% of screen width to be used for image preview.",
-//            subcategory = "Image Preview",
-//            min = 0F, max = 1F
-//    )
-//    public float imagePreviewWidth = 0.50F;
+    @Switch(
+            title = "Image Preview",
+            description = "Preview image links when hovering over a supported URL." +
+                    "\nPress Shift to use fullscreen and Control to render in native image resolution.",
+            subcategory = "Image Preview"
+    )
+    public boolean imagePreview = true;
+
+    @Slider(
+            title = "Image Preview Width",
+            description = "The % of screen width to be used for image preview.",
+            subcategory = "Image Preview"
+    )
+    public float imagePreviewWidth = 50F;
 }

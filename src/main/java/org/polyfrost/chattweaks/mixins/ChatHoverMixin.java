@@ -108,7 +108,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
         }
         return -1;
     }
-    *///?} elif <26.2 {
+    *///?} else {
     /*@Shadow
     @Final
     private List<GuiMessage.Line> trimmedMessages;
@@ -141,7 +141,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
         return false;
     }
 
-    // 26.1 removed screenToChatX/Y, getMessageLineIndexAt AND isChatHidden from
+    // 26.1+ removed screenToChatX/Y, getMessageLineIndexAt AND isChatHidden from
     // ChatComponent; reimplement hit-testing from the surviving geometry primitives.
     @Unique
     private double chattweaks$screenToChatX(double d) {
@@ -206,7 +206,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
 
         Matcher matcher = chattweaks$URL.matcher(line.toString());
         return matcher.find() ? matcher.group() : null;
-        *///?} elif <26.2 {
+        *///?} else {
         /*double chatX = chattweaks$screenToChatX(mouseX);
         double chatY = chattweaks$screenToChatY(mouseY);
         int index = chattweaks$getMessageLineIndexAt(chatX, chatY);
@@ -222,8 +222,6 @@ public abstract class ChatHoverMixin implements HoveredUrl {
 
         Matcher matcher = chattweaks$URL.matcher(line.toString());
         return matcher.find() ? matcher.group() : null;
-        *///?} else {
-        /*return null;
         *///?}
     }
 }
