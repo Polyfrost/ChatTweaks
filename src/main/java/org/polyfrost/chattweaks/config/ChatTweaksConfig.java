@@ -2,15 +2,24 @@ package org.polyfrost.chattweaks.config;
 
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.oneconfig.api.config.v1.Config;
+import org.polyfrost.oneconfig.api.config.v1.annotations.Color;
 import org.polyfrost.oneconfig.api.config.v1.annotations.Dropdown;
 import org.polyfrost.oneconfig.api.config.v1.annotations.Slider;
 import org.polyfrost.oneconfig.api.config.v1.annotations.Switch;
+import org.polyfrost.oneconfig.api.config.v1.annotations.Text;
 
 public class ChatTweaksConfig extends Config {
     public ChatTweaksConfig() {
         super(ChatTweaks.ID + ".json", ChatTweaks.NAME, Category.QOL);
 
         loadFrom("patcher.toml");
+    }
+
+    @Override
+    protected void initialize(boolean byConfigManager) {
+        super.initialize(byConfigManager);
+        hideIf("timestampsLeftBracket", () -> timestampsBrackets != 5);
+        hideIf("timestampsRightBracket", () -> timestampsBrackets != 5);
     }
 
     @Switch(
@@ -43,6 +52,22 @@ public class ChatTweaksConfig extends Config {
     )
     public int compactChatTime = 60;
 
+    @Dropdown(
+            title = "Compact Chat Format",
+            description = "Change how the counter appended to compacted messages is formatted.",
+            options = {"(2)", "[2]", "{2}", "<2>", "(x2)", "[x2]", "{x2}", "<x2>", "x2", "2x"},
+            subcategory = "Compact Chat"
+    )
+    public int compactChatFormat = 0;
+
+    @Color(
+            title = "Compact Chat Color",
+            description = "Change the color of the counter appended to compacted messages.",
+            subcategory = "Compact Chat",
+            alpha = false
+    )
+    public java.awt.Color compactChatColor = new java.awt.Color(0xAAAAAA);
+
 
     @Switch(
             title = "Chat Timestamps",
@@ -66,6 +91,45 @@ public class ChatTweaksConfig extends Config {
             subcategory = "Timestamps"
     )
     public int timestampsStyle = 0;
+
+    @Dropdown(
+            title = "Chat Timestamps Brackets",
+            description = "Change the brackets that surround Chat Timestamps.",
+            options = {"[12:00]", "(12:00)", "{12:00}", "<12:00>", "12:00", "Custom"},
+            subcategory = "Timestamps"
+    )
+    public int timestampsBrackets = 0;
+
+    @Text(
+            title = "Custom Left Bracket",
+            description = "The text placed before the time. Only used when Chat Timestamps Brackets is set to Custom.",
+            subcategory = "Timestamps",
+            placeholder = "["
+    )
+    public String timestampsLeftBracket = "[";
+
+    @Text(
+            title = "Custom Right Bracket",
+            description = "The text placed after the time. Only used when Chat Timestamps Brackets is set to Custom.",
+            subcategory = "Timestamps",
+            placeholder = "]"
+    )
+    public String timestampsRightBracket = "]";
+
+    @Color(
+            title = "Chat Timestamps Color",
+            description = "Change the color of Chat Timestamps.",
+            subcategory = "Timestamps",
+            alpha = false
+    )
+    public java.awt.Color timestampsColor = new java.awt.Color(0xAAAAAA);
+
+    @Switch(
+            title = "Only Show New Timestamps",
+            description = "Only timestamp the first message of each new time, and align the rest below it. Has no effect when the style is Message Hover.",
+            subcategory = "Timestamps"
+    )
+    public boolean onlyNewTimestamps;
 
     @Switch(
             title = "Show Seconds on Timestamps",
@@ -95,7 +159,6 @@ public class ChatTweaksConfig extends Config {
             subcategory = "Safe Chat Clicks"
     )
     public boolean safeChatClicksHistory;
-
 
     @Switch(
             title = "Image Preview",

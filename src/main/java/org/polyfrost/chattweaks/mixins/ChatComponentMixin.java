@@ -1,6 +1,5 @@
 package org.polyfrost.chattweaks.mixins;
 
-import net.minecraft.ChatFormatting;
 //? if >=26.1 {
 /*import net.minecraft.client.multiplayer.chat.GuiMessage;
 import net.minecraft.client.multiplayer.chat.GuiMessageTag;
@@ -8,11 +7,14 @@ import net.minecraft.client.multiplayer.chat.GuiMessageTag;
 import net.minecraft.client.GuiMessage;
 import net.minecraft.client.GuiMessageTag;
 //?}
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MessageSignature;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.TextColor;
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.util.ChatCompat;
 import org.polyfrost.chattweaks.util.ChatUtils;
@@ -35,6 +37,8 @@ public abstract class ChatComponentMixin {
     private static final Map<String, Long> chattweaks$lastSeen = new HashMap<>();
     @Unique
     private static boolean chattweaks$reentrant = false;
+    @Unique
+    private static String chattweaks$lastStamp = "";
 
     //? if >=26.1 {
     /*@Shadow
@@ -111,19 +115,44 @@ public abstract class ChatComponentMixin {
         String time = ChatUtils.getCurrentTime();
 
         if (ChatTweaks.config.timestampsStyle == 0) {
+            String stamp = ChatUtils.formatTimestamp(time) + " ";
+            if (ChatTweaks.config.onlyNewTimestamps) {
+                if (stamp.equals(chattweaks$lastStamp)) {
+                    return Component.empty()
+                            .append(Component.literal(chattweaks$padding(stamp)))
+                            .append(component);
+                }
+                chattweaks$lastStamp = stamp;
+            }
             return Component.empty()
-                    .append(Component.literal("[" + time + "] ").withStyle(ChatFormatting.GRAY))
+                    .append(Component.literal(stamp).withStyle(chattweaks$timestampStyle()))
                     .append(component);
         }
 
         MutableComponent copy = component.copy();
         Style style = copy.getStyle();
-        MutableComponent hoverText = Component.literal("Sent at " + time).withStyle(ChatFormatting.GRAY);
+        MutableComponent hoverText = Component.literal("Sent at " + time).withStyle(chattweaks$timestampStyle());
         Component existing = ChatCompat.showTextValue(style.getHoverEvent());
         if (existing != null) {
             hoverText = existing.copy().append("\n").append(hoverText);
         }
         return copy.setStyle(style.withHoverEvent(ChatCompat.showText(hoverText)));
+    }
+
+    @Unique
+    private Style chattweaks$timestampStyle() {
+        return Style.EMPTY.withColor(TextColor.fromRgb(ChatTweaks.config.timestampsColor.getRGB() & 0xFFFFFF));
+    }
+
+    @Unique
+    private static String chattweaks$padding(String stamp) {
+        Font font = Minecraft.getInstance().font;
+        int spaceWidth = font.width(" ");
+        if (spaceWidth <= 0) {
+            return " ".repeat(stamp.length());
+        }
+        int spaces = Math.round((float) font.width(stamp) / spaceWidth);
+        return " ".repeat(Math.max(1, spaces));
     }
 
     @Unique
@@ -168,6 +197,8 @@ public abstract class ChatComponentMixin {
         allMessages.remove(found);
         refreshTrimmedMessages();
 
-        return component.copy().append(Component.literal(" (" + count + ")").withStyle(ChatFormatting.GRAY));
+        int rgb = ChatTweaks.config.compactChatColor.getRGB() & 0xFFFFFF;
+        return component.copy().append(Component.literal(ChatUtils.formatCount(count))
+                .withStyle(Style.EMPTY.withColor(TextColor.fromRgb(rgb))));
     }
 }

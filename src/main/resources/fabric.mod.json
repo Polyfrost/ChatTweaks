@@ -9,6 +9,7 @@
   "contributors": [
     "awruff"
   ],
+  "license": "CC-BY-NC-SA-4.0",
   "environment": "client",
   "entrypoints": {
     "client": [
@@ -18,7 +19,7 @@
     ]
   },
   "mixins": [
-    "${id}.mixins.json"
+    "chattweaks.mixins.json"
   ],
   "depends": {
     "minecraft": "${minecraft}",
