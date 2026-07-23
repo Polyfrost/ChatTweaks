@@ -68,6 +68,9 @@ dependencies {
     ocfg("${sc.current.version}-fabric", "commands", "config", "config-impl", "events", "internal", "ui", "utils", "hud")
 
     modImplementation("net.fabricmc.fabric-api:fabric-api:${sc.properties["deps.fabric_api"] as String}")
+
+    testImplementation("org.junit.jupiter:junit-jupiter:6.1.2")
+    testImplementation("net.fabricmc:fabric-loader-junit:${property("deps.fabric_loader")}")
 }
 
 loom {
@@ -115,6 +118,10 @@ tasks {
 
         val mixinJava = "JAVA_${requiredJava.majorVersion}"
         filesMatching("*.mixins.json") { expand("java" to mixinJava) }
+    }
+
+    test {
+        useJUnitPlatform()
     }
 
     register<Copy>("buildAndCollect") {
