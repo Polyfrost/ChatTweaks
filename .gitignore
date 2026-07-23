@@ -1,6 +1,7 @@
 .gradle
 build/
 run/
+versions/
 .idea/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
