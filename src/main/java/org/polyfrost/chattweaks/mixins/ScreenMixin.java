@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class ScreenMixin {
 
     //? if >=1.21.11 {
-    //@Inject(method = "defaultHandleClickEvent", at = @At("HEAD"))
+    //@Inject(method = "defaultHandleGameClickEvent", at = @At("HEAD"))
     //private static void chattweaks$safeChatClicksHistory(ClickEvent clickEvent, Minecraft minecraft, Screen screen, CallbackInfo ci) {
     //    if (!ChatTweaks.config.safeChatClicksHistory || !(screen instanceof ChatScreen) || clickEvent == null) {
     //        return;
