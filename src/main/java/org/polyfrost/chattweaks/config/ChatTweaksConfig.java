@@ -18,6 +18,7 @@ public class ChatTweaksConfig extends Config {
     @Override
     protected void initialize(boolean byConfigManager) {
         super.initialize(byConfigManager);
+        if (tree != null) VanillaChatOptions.attach(tree);
         hideIf("timestampsLeftBracket", () -> timestampsBrackets != 5);
         hideIf("timestampsRightBracket", () -> timestampsBrackets != 5);
     }

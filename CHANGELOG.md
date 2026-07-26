@@ -1,2 +1,3 @@
-## 1.0.1
-- Fixed Safe Chat Clicks History not working on 1.21.11–26.2
+## 1.1.0
+feat: expose vanilla options in config
+fix: mark chatpatches as incompatible
