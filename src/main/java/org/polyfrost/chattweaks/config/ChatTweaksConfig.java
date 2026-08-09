@@ -32,7 +32,7 @@ public class ChatTweaksConfig extends Config {
 
     @Switch(
             title = "Increase Chat History Limit",
-            description = "Increase the 100 cap on chat limit history.",
+            description = "Increase the 100 message cap on chat limit history to 1000 messages.",
             subcategory = "History"
     )
     public boolean increaseChatHistoryLimit = true;
