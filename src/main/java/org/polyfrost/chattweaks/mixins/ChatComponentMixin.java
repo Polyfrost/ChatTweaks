@@ -1,12 +1,12 @@
 package org.polyfrost.chattweaks.mixins;
 
 //? if >=26.1 {
-/*import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.multiplayer.chat.GuiMessage;
 import net.minecraft.client.multiplayer.chat.GuiMessageTag;
-*///?} else {
-import net.minecraft.client.GuiMessage;
+//?} else {
+/*import net.minecraft.client.GuiMessage;
 import net.minecraft.client.GuiMessageTag;
-//?}
+*///?}
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ChatComponent;
@@ -41,10 +41,10 @@ public abstract class ChatComponentMixin {
     private static String chattweaks$lastStamp = "";
 
     //? if >=26.1 {
-    /*@Shadow
+    @Shadow
     private void addMessage(Component component, MessageSignature signature, net.minecraft.client.multiplayer.chat.GuiMessageSource source, GuiMessageTag tag) {
     }
-    *///?}
+    //?}
     @Shadow
     @Final
     private List<GuiMessage> allMessages;
@@ -53,18 +53,18 @@ public abstract class ChatComponentMixin {
     protected abstract void refreshTrimmedMessages();
 
     //? if >=26.1 {
-    /*
+    
     @Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/multiplayer/chat/GuiMessageSource;Lnet/minecraft/client/multiplayer/chat/GuiMessageTag;)V", at = @At("HEAD"), cancellable = true)
     private void chattweaks$onAddMessage(Component component, MessageSignature signature, net.minecraft.client.multiplayer.chat.GuiMessageSource source, GuiMessageTag tag, CallbackInfo ci) {
         chattweaks$handleAdd(component, signature, source, tag, ci);
     }
-    */
+    
     //?} else {
-    @Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V", at = @At("HEAD"), cancellable = true)
+    /*@Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V", at = @At("HEAD"), cancellable = true)
     private void chattweaks$onAddMessage(Component component, MessageSignature signature, GuiMessageTag tag, CallbackInfo ci) {
         chattweaks$handleAdd(component, signature, null, tag, ci);
     }
-    //?}
+    *///?}
 
     @Unique
     private void chattweaks$handleAdd(Component component, MessageSignature signature, Object source, Object tag, CallbackInfo ci) {
@@ -97,10 +97,10 @@ public abstract class ChatComponentMixin {
     @Unique
     private void chattweaks$dispatch(Component component, MessageSignature signature, Object source, Object tag) {
         //? if >=26.1 {
-        /*this.addMessage(component, signature, (net.minecraft.client.multiplayer.chat.GuiMessageSource) source, (GuiMessageTag) tag);
-         *///?} else {
-        ((ChatComponent) (Object) this).addMessage(component, signature, (GuiMessageTag) tag);
-        //?}
+        this.addMessage(component, signature, (net.minecraft.client.multiplayer.chat.GuiMessageSource) source, (GuiMessageTag) tag);
+         //?} else {
+        /*((ChatComponent) (Object) this).addMessage(component, signature, (GuiMessageTag) tag);
+        *///?}
     }
 
     @Unique

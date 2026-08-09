@@ -5,12 +5,12 @@ import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 //? if <26.1 {
-import net.minecraft.client.gui.GuiGraphics;
-//?} else {
-/*import net.minecraft.client.gui.GuiGraphicsExtractor;
-*///?}
+/*import net.minecraft.client.gui.GuiGraphics;
+*///?} else {
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+//?}
 import net.minecraft.client.renderer.texture.DynamicTexture;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.lwjgl.glfw.GLFW;
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.util.ChatCompat;
@@ -34,7 +34,7 @@ public final class ImagePreview {
 
     private static volatile NativeImage pendingImage;
     private static String loaded;
-    private static ResourceLocation texture;
+    private static Identifier texture;
     private static int imageWidth = 100;
     private static int imageHeight = 100;
 
@@ -42,10 +42,10 @@ public final class ImagePreview {
     // GuiGraphicsExtractor. Both expose the same blit(RenderPipeline, ...) overload,
     // so only the parameter type differs (see GuiMixin for the matching hooks).
     //? if <26.1 {
-    public static void render(GuiGraphics graphics) {
-    //?} else {
-    /*public static void render(GuiGraphicsExtractor graphics) {
-    *///?}
+    /*public static void render(GuiGraphics graphics) {
+    *///?} else {
+    public static void render(GuiGraphicsExtractor graphics) {
+    //?}
         if (!ChatTweaks.config.imagePreview) {
             return;
         }
@@ -55,10 +55,10 @@ public final class ImagePreview {
         double mouseY = mc.mouseHandler.ypos() * window.getGuiScaledHeight() / Math.max(1, window.getScreenHeight());
 
         //? if <26.2 {
-        ChatComponent chat = mc.gui.getChat();
-        //?} else {
-        /*ChatComponent chat = mc.gui.hud.getChat();
-        *///?}
+        /*ChatComponent chat = mc.gui.getChat();
+        *///?} else {
+        ChatComponent chat = mc.gui.hud.getChat();
+        //?}
         String url = ((HoveredUrl) chat).chattweaks$hoveredUrl(mouseX, mouseY);
         if (url == null) {
             releaseTexture(mc);
@@ -69,10 +69,10 @@ public final class ImagePreview {
     }
 
     //? if <26.1 {
-    private static void handle(Minecraft mc, GuiGraphics graphics, String value) {
-    //?} else {
-    /*private static void handle(Minecraft mc, GuiGraphicsExtractor graphics, String value) {
-    *///?}
+    /*private static void handle(Minecraft mc, GuiGraphics graphics, String value) {
+    *///?} else {
+    private static void handle(Minecraft mc, GuiGraphicsExtractor graphics, String value) {
+    //?}
         if (!value.startsWith("http")) {
             releaseTexture(mc);
             return;
@@ -99,7 +99,7 @@ public final class ImagePreview {
             //?} else {
             /*DynamicTexture dynamicTexture = new DynamicTexture(image);
             *///?}
-            texture = ResourceLocation.fromNamespaceAndPath("chattweaks", "preview");
+            texture = Identifier.fromNamespaceAndPath("chattweaks", "preview");
             mc.getTextureManager().register(texture, dynamicTexture);
             imageWidth = image.getWidth();
             imageHeight = image.getHeight();
@@ -130,8 +130,8 @@ public final class ImagePreview {
         // On 26.1+ the extractor batches draws per stratum; advance to a fresh one so the
         // preview lands on top of the rest of the HUD instead of behind it.
         //? if >=26.1 {
-        /*graphics.nextStratum();
-        *///?}
+        graphics.nextStratum();
+        //?}
 
         //? if >=1.21.8 {
         graphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, texture, 0, 0, 0F, 0F, (int) drawWidth, (int) drawHeight, imageWidth, imageHeight, imageWidth, imageHeight);
