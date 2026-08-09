@@ -88,6 +88,8 @@ loom {
         runDirectory = rootProject.file("run")
         jvmArguments.add("-Dmixin.debug.export=true")
     }
+
+    runConfigs.remove(runConfigs["server"])
 }
 
 java {

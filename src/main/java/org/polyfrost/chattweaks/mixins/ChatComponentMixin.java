@@ -1,12 +1,6 @@
 package org.polyfrost.chattweaks.mixins;
 
-//? if >=26.1 {
-import net.minecraft.client.multiplayer.chat.GuiMessage;
-import net.minecraft.client.multiplayer.chat.GuiMessageTag;
-//?} else {
-/*import net.minecraft.client.GuiMessage;
-import net.minecraft.client.GuiMessageTag;
-*///?}
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ChatComponent;
@@ -15,13 +9,11 @@ import net.minecraft.network.chat.MessageSignature;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import net.minecraft.util.ArrayListDeque;
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.util.ChatCompat;
 import org.polyfrost.chattweaks.util.ChatUtils;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -29,6 +21,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+//? if >=26.1 {
+import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
+//?} else {
+/*import net.minecraft.client.GuiMessage;
+import net.minecraft.client.GuiMessageTag;
+*///?}
 
 @Mixin(ChatComponent.class)
 public abstract class ChatComponentMixin {
@@ -53,7 +53,7 @@ public abstract class ChatComponentMixin {
     protected abstract void refreshTrimmedMessages();
 
     //? if >=26.1 {
-    
+
     @Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/multiplayer/chat/GuiMessageSource;Lnet/minecraft/client/multiplayer/chat/GuiMessageTag;)V", at = @At("HEAD"), cancellable = true)
     private void chattweaks$onAddMessage(Component component, MessageSignature signature, net.minecraft.client.multiplayer.chat.GuiMessageSource source, GuiMessageTag tag, CallbackInfo ci) {
         chattweaks$handleAdd(component, signature, source, tag, ci);
@@ -65,6 +65,17 @@ public abstract class ChatComponentMixin {
         chattweaks$handleAdd(component, signature, null, tag, ci);
     }
     *///?}
+
+    @SuppressWarnings("unused")
+    @Shadow
+    @Final
+    @Mutable
+    private ArrayListDeque<String> recentChat = new ArrayListDeque<>(100);
+
+    @ModifyExpressionValue(method = {"addMessageToDisplayQueue", "addMessageToQueue", "addRecentChat"}, at = @At(value = "CONSTANT", args = "intValue=100"))
+    public int chattweaks$increaseChatHistoryLimit(int original) {
+        return ChatTweaks.config.increaseChatHistoryLimit ? Integer.MAX_VALUE : original;
+    }
 
     @Unique
     private void chattweaks$handleAdd(Component component, MessageSignature signature, Object source, Object tag, CallbackInfo ci) {
