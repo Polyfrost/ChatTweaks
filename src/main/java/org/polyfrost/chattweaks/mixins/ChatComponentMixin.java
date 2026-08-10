@@ -9,7 +9,6 @@ import net.minecraft.network.chat.MessageSignature;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
-import net.minecraft.util.ArrayListDeque;
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.util.ChatCompat;
 import org.polyfrost.chattweaks.util.ChatUtils;
@@ -66,14 +65,8 @@ public abstract class ChatComponentMixin {
     }
     *///?}
 
-    @SuppressWarnings("unused")
-    @Shadow
-    @Final
-    @Mutable
-    private ArrayListDeque<String> recentChat = new ArrayListDeque<>(ChatTweaks.config.increaseChatHistoryLimit);
-
-    @ModifyExpressionValue(method = {"addMessageToDisplayQueue", "addMessageToQueue", "addRecentChat"}, at = @At(value = "CONSTANT", args = "intValue=100"))
-    public int chattweaks$increaseChatHistoryLimit(int original) {
+    @ModifyExpressionValue(method = {"addMessageToDisplayQueue", "addMessageToQueue"}, at = @At(value = "CONSTANT", args = "intValue=100"), require = 2, allow = 2)
+    private int chattweaks$increaseChatHistoryLimit(int original) {
         return ChatTweaks.config.increaseChatHistoryLimit;
     }
 
