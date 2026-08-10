@@ -70,11 +70,11 @@ public abstract class ChatComponentMixin {
     @Shadow
     @Final
     @Mutable
-    private ArrayListDeque<String> recentChat = new ArrayListDeque<>(1000);
+    private ArrayListDeque<String> recentChat = new ArrayListDeque<>(ChatTweaks.config.increaseChatHistoryLimit);
 
     @ModifyExpressionValue(method = {"addMessageToDisplayQueue", "addMessageToQueue", "addRecentChat"}, at = @At(value = "CONSTANT", args = "intValue=100"))
     public int chattweaks$increaseChatHistoryLimit(int original) {
-        return ChatTweaks.config.increaseChatHistoryLimit ? 1000 : original;
+        return ChatTweaks.config.increaseChatHistoryLimit;
     }
 
     @Unique
