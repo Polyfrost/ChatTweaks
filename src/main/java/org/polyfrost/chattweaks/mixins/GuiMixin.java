@@ -14,13 +14,13 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?}
 import net.minecraft.client.gui.components.ChatComponent;
 import org.polyfrost.chattweaks.ChatTweaks;
+import org.polyfrost.chattweaks.features.ChatHistory;
 import org.polyfrost.chattweaks.features.ImagePreview;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-// <26.1 hooks Gui#render and 26.1 hooks Gui#extractRenderState and 26.2+ hooks Hud#extractRenderState
 //? if <26.2 {
 /*@Mixin(Gui.class)
 *///?} else {
@@ -38,6 +38,11 @@ public class GuiMixin {
         ImagePreview.render(guiGraphics);
     }
     //?}
+
+    @Inject(method = "onDisconnected", at = @At("HEAD"))
+    private void chattweaks$saveChatHistory(CallbackInfo ci) {
+        ChatHistory.onDisconnected();
+    }
 
     @WrapWithCondition(method = "onDisconnected", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;clearMessages(Z)V"))
     private boolean chattweaks$clearChatHistory(ChatComponent instance, boolean bl) {

@@ -3,6 +3,7 @@ package org.polyfrost.chattweaks.util;
 import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -71,13 +72,26 @@ public final class ChatCompat {
         *///?}
     }
 
-    public static void addRecentChat(String command) {
+    public static ChatComponent getChat() {
         Minecraft mc = Minecraft.getInstance();
         //? if >=26.2 {
-        mc.gui.hud.getChat().addRecentChat(command);
+        return mc.gui.hud.getChat();
         //?} else {
-        /*mc.gui.getChat().addRecentChat(command);
+        /*return mc.gui.getChat();
         *///?}
+    }
+
+    public static int getGuiTicks() {
+        Minecraft mc = Minecraft.getInstance();
+        //? if >=26.2 {
+        return mc.gui.hud.getGuiTicks();
+        //?} else {
+        /*return mc.gui.getGuiTicks();
+        *///?}
+    }
+
+    public static void addRecentChat(String command) {
+        getChat().addRecentChat(command);
     }
 
     @Nullable
@@ -85,7 +99,7 @@ public final class ChatCompat {
         //? if >=1.21.11 {
         return null;
         //?} else {
-        /*return Minecraft.getInstance().gui.getChat().getClickedComponentStyleAt(mouseX, mouseY);
+        /*return getChat().getClickedComponentStyleAt(mouseX, mouseY);
         *///?}
     }
 }

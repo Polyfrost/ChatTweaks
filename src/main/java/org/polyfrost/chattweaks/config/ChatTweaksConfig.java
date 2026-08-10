@@ -21,6 +21,8 @@ public class ChatTweaksConfig extends Config {
         if (tree != null) VanillaChatOptions.attach(tree);
         hideIf("timestampsLeftBracket", () -> timestampsBrackets != 5);
         hideIf("timestampsRightBracket", () -> timestampsBrackets != 5);
+        hideIf("saveChatHistoryInterval", () -> !saveChatHistory);
+        hideIf("sessionMarkers", () -> !saveChatHistory);
     }
 
     @Switch(
@@ -45,6 +47,28 @@ public class ChatTweaksConfig extends Config {
             subcategory = "History"
     )
     public boolean dontClearChatHistory = true;
+
+    @Switch(
+            title = "Save Chat History",
+            description = "Keep a copy of the chat on disk for each server and restore it when you connect.",
+            subcategory = "History"
+    )
+    public boolean saveChatHistory = true;
+
+    @Slider(
+            title = "Save Chat History Interval",
+            description = "How often the chat is written to disk. Measured in seconds.",
+            subcategory = "History",
+            min = 5, max = 60, step = 1
+    )
+    public int saveChatHistoryInterval = 30;
+
+    @Switch(
+            title = "Session Markers",
+            description = "Show a divider stamped with the date and time whenever you connect to a server.",
+            subcategory = "History"
+    )
+    public boolean sessionMarkers = true;
 
     @Switch(
             title = "Compact Chat",

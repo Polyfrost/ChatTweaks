@@ -9,6 +9,7 @@
   },
   "client": [
     "ChatComponentMixin",
+    "ChatHistoryMixin",
     "ChatHoverMixin",
     "ChatScreenMixin",
     "GuiMixin",

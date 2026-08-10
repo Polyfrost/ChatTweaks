@@ -3,7 +3,6 @@ package org.polyfrost.chattweaks.features;
 import com.mojang.blaze3d.platform.NativeImage;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.components.ChatComponent;
 //? if <26.1 {
 /*import net.minecraft.client.gui.GuiGraphics;
 *///?} else {
@@ -38,8 +37,6 @@ public final class ImagePreview {
     private static int imageWidth = 100;
     private static int imageHeight = 100;
 
-    // <26.1 gets the immediate GuiGraphics and 26.1+ gets the deferred GuiGraphicsExtractor
-    // both expose the same blit overload so only the parameter type differs
     //? if <26.1 {
     /*public static void render(GuiGraphics graphics) {
     *///?} else {
@@ -53,12 +50,7 @@ public final class ImagePreview {
         double mouseX = mc.mouseHandler.xpos() * window.getGuiScaledWidth() / Math.max(1, window.getScreenWidth());
         double mouseY = mc.mouseHandler.ypos() * window.getGuiScaledHeight() / Math.max(1, window.getScreenHeight());
 
-        //? if <26.2 {
-        /*ChatComponent chat = mc.gui.getChat();
-        *///?} else {
-        ChatComponent chat = mc.gui.hud.getChat();
-        //?}
-        String url = ((HoveredUrl) chat).chattweaks$hoveredUrl(mouseX, mouseY);
+        String url = ((HoveredUrl) ChatCompat.getChat()).chattweaks$hoveredUrl(mouseX, mouseY);
         if (url == null) {
             releaseTexture(mc);
             loaded = null;
@@ -126,7 +118,6 @@ public final class ImagePreview {
             drawWidth = drawHeight * aspectRatio;
         }
 
-        // the 26.1+ extractor batches draws per stratum so a fresh one puts the preview above the HUD
         //? if >=26.1 {
         graphics.nextStratum();
         //?}
