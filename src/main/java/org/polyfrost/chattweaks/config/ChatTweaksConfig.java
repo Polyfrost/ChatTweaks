@@ -30,6 +30,21 @@ public class ChatTweaksConfig extends Config {
     )
     public boolean removeBlankMessages = false;
 
+    @Slider(
+            title = "Increase Chat History Limit",
+            description = "Increase the 100 message cap on chat limit history to a custom amount.",
+            subcategory = "History",
+            min = 100,
+            max = 16384
+    )
+    public int increaseChatHistoryLimit = 1000;
+
+    @Switch(
+            title = "Don't Clear Chat History",
+            description = "Skip clearing chat history when disconnecting from a world.",
+            subcategory = "History"
+    )
+    public boolean dontClearChatHistory = true;
 
     @Switch(
             title = "Compact Chat",

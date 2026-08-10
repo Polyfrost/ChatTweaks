@@ -1,10 +1,10 @@
 package org.polyfrost.chattweaks.mixins;
 
 //? if >=26.1 {
-/*import net.minecraft.client.multiplayer.chat.GuiMessage;
-*///?} else {
-import net.minecraft.client.GuiMessage;
-//?}
+import net.minecraft.client.multiplayer.chat.GuiMessage;
+//?} else {
+/*import net.minecraft.client.GuiMessage;
+*///?}
 import net.minecraft.client.gui.components.ChatComponent;
 import org.jetbrains.annotations.Nullable;
 import org.polyfrost.chattweaks.util.HoveredUrl;
@@ -24,7 +24,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
     private static final Pattern chattweaks$URL = Pattern.compile("https?://\\S+");
 
     //? if <1.21.11 {
-    @Shadow
+    /*@Shadow
     @Final
     private List<GuiMessage.Line> trimmedMessages;
 
@@ -42,7 +42,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
     private int getMessageLineIndexAt(double d, double e) {
         return 0;
     }
-    //?} elif <26.1 {
+    *///?} elif <26.1 {
     /*@Shadow
     @Final
     private List<GuiMessage.Line> trimmedMessages;
@@ -109,7 +109,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
         return -1;
     }
     *///?} else {
-    /*@Shadow
+    @Shadow
     @Final
     private List<GuiMessage.Line> trimmedMessages;
 
@@ -169,13 +169,13 @@ public abstract class ChatHoverMixin implements HoveredUrl {
         }
         return -1;
     }
-    *///?}
+    //?}
 
     @Override
     @Nullable
     public String chattweaks$hoveredUrl(double mouseX, double mouseY) {
         //? if <1.21.11 {
-        double chatX = screenToChatX(mouseX);
+        /*double chatX = screenToChatX(mouseX);
         double chatY = screenToChatY(mouseY);
         int index = getMessageLineIndexAt(chatX, chatY);
         if (index < 0 || index >= trimmedMessages.size()) {
@@ -190,7 +190,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
 
         Matcher matcher = chattweaks$URL.matcher(line.toString());
         return matcher.find() ? matcher.group() : null;
-        //?} elif <26.1 {
+        *///?} elif <26.1 {
         /*double chatX = chattweaks$screenToChatX(mouseX);
         double chatY = chattweaks$screenToChatY(mouseY);
         int index = chattweaks$getMessageLineIndexAt(chatX, chatY);
@@ -207,7 +207,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
         Matcher matcher = chattweaks$URL.matcher(line.toString());
         return matcher.find() ? matcher.group() : null;
         *///?} else {
-        /*double chatX = chattweaks$screenToChatX(mouseX);
+        double chatX = chattweaks$screenToChatX(mouseX);
         double chatY = chattweaks$screenToChatY(mouseY);
         int index = chattweaks$getMessageLineIndexAt(chatX, chatY);
         if (index < 0 || index >= trimmedMessages.size()) {
@@ -222,6 +222,6 @@ public abstract class ChatHoverMixin implements HoveredUrl {
 
         Matcher matcher = chattweaks$URL.matcher(line.toString());
         return matcher.find() ? matcher.group() : null;
-        *///?}
+        //?}
     }
 }

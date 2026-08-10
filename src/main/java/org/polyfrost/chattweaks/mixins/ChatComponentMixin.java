@@ -1,12 +1,6 @@
 package org.polyfrost.chattweaks.mixins;
 
-//? if >=26.1 {
-/*import net.minecraft.client.multiplayer.chat.GuiMessage;
-import net.minecraft.client.multiplayer.chat.GuiMessageTag;
-*///?} else {
-import net.minecraft.client.GuiMessage;
-import net.minecraft.client.GuiMessageTag;
-//?}
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ChatComponent;
@@ -18,10 +12,7 @@ import net.minecraft.network.chat.TextColor;
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.util.ChatCompat;
 import org.polyfrost.chattweaks.util.ChatUtils;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -29,6 +20,14 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+//? if >=26.1 {
+import net.minecraft.client.multiplayer.chat.GuiMessage;
+import net.minecraft.client.multiplayer.chat.GuiMessageTag;
+//?} else {
+/*import net.minecraft.client.GuiMessage;
+import net.minecraft.client.GuiMessageTag;
+*///?}
 
 @Mixin(ChatComponent.class)
 public abstract class ChatComponentMixin {
@@ -41,10 +40,10 @@ public abstract class ChatComponentMixin {
     private static String chattweaks$lastStamp = "";
 
     //? if >=26.1 {
-    /*@Shadow
+    @Shadow
     private void addMessage(Component component, MessageSignature signature, net.minecraft.client.multiplayer.chat.GuiMessageSource source, GuiMessageTag tag) {
     }
-    *///?}
+    //?}
     @Shadow
     @Final
     private List<GuiMessage> allMessages;
@@ -53,18 +52,23 @@ public abstract class ChatComponentMixin {
     protected abstract void refreshTrimmedMessages();
 
     //? if >=26.1 {
-    /*
+
     @Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/multiplayer/chat/GuiMessageSource;Lnet/minecraft/client/multiplayer/chat/GuiMessageTag;)V", at = @At("HEAD"), cancellable = true)
     private void chattweaks$onAddMessage(Component component, MessageSignature signature, net.minecraft.client.multiplayer.chat.GuiMessageSource source, GuiMessageTag tag, CallbackInfo ci) {
         chattweaks$handleAdd(component, signature, source, tag, ci);
     }
-    */
+    
     //?} else {
-    @Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V", at = @At("HEAD"), cancellable = true)
+    /*@Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V", at = @At("HEAD"), cancellable = true)
     private void chattweaks$onAddMessage(Component component, MessageSignature signature, GuiMessageTag tag, CallbackInfo ci) {
         chattweaks$handleAdd(component, signature, null, tag, ci);
     }
-    //?}
+    *///?}
+
+    @ModifyExpressionValue(method = {"addMessageToDisplayQueue", "addMessageToQueue"}, at = @At(value = "CONSTANT", args = "intValue=100"), require = 2, allow = 2)
+    private int chattweaks$increaseChatHistoryLimit(int original) {
+        return ChatTweaks.config.increaseChatHistoryLimit;
+    }
 
     @Unique
     private void chattweaks$handleAdd(Component component, MessageSignature signature, Object source, Object tag, CallbackInfo ci) {
@@ -97,10 +101,10 @@ public abstract class ChatComponentMixin {
     @Unique
     private void chattweaks$dispatch(Component component, MessageSignature signature, Object source, Object tag) {
         //? if >=26.1 {
-        /*this.addMessage(component, signature, (net.minecraft.client.multiplayer.chat.GuiMessageSource) source, (GuiMessageTag) tag);
-         *///?} else {
-        ((ChatComponent) (Object) this).addMessage(component, signature, (GuiMessageTag) tag);
-        //?}
+        this.addMessage(component, signature, (net.minecraft.client.multiplayer.chat.GuiMessageSource) source, (GuiMessageTag) tag);
+         //?} else {
+        /*((ChatComponent) (Object) this).addMessage(component, signature, (GuiMessageTag) tag);
+        *///?}
     }
 
     @Unique

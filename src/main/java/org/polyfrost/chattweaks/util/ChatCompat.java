@@ -74,18 +74,18 @@ public final class ChatCompat {
     public static void addRecentChat(String command) {
         Minecraft mc = Minecraft.getInstance();
         //? if >=26.2 {
-        /*mc.gui.hud.getChat().addRecentChat(command);
-        *///?} else {
-        mc.gui.getChat().addRecentChat(command);
-        //?}
+        mc.gui.hud.getChat().addRecentChat(command);
+        //?} else {
+        /*mc.gui.getChat().addRecentChat(command);
+        *///?}
     }
 
     @Nullable
     public static Style hoveredChatStyle(double mouseX, double mouseY) {
         //? if >=1.21.11 {
-        /*return null;
-        *///?} else {
-        return Minecraft.getInstance().gui.getChat().getClickedComponentStyleAt(mouseX, mouseY);
-        //?}
+        return null;
+        //?} else {
+        /*return Minecraft.getInstance().gui.getChat().getClickedComponentStyleAt(mouseX, mouseY);
+        *///?}
     }
 }

@@ -18,17 +18,17 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class ScreenMixin {
 
     //? if >=1.21.11 {
-    //@Inject(method = "defaultHandleGameClickEvent", at = @At("HEAD"))
-    //private static void chattweaks$safeChatClicksHistory(ClickEvent clickEvent, Minecraft minecraft, Screen screen, CallbackInfo ci) {
-    //    if (!ChatTweaks.config.safeChatClicksHistory || !(screen instanceof ChatScreen) || clickEvent == null) {
-    //        return;
-    //    }
-    //    if (ChatCompat.isRunCommand(clickEvent)) {
-    //        ChatCompat.addRecentChat(ChatCompat.safeClickValue(clickEvent));
-    //    }
-    //}
+    @Inject(method = "defaultHandleGameClickEvent", at = @At("HEAD"))
+    private static void chattweaks$safeChatClicksHistory(ClickEvent clickEvent, Minecraft minecraft, Screen screen, CallbackInfo ci) {
+        if (!ChatTweaks.config.safeChatClicksHistory || !(screen instanceof ChatScreen) || clickEvent == null) {
+            return;
+        }
+        if (ChatCompat.isRunCommand(clickEvent)) {
+            ChatCompat.addRecentChat(ChatCompat.safeClickValue(clickEvent));
+        }
+    }
     //?} else {
-    @Inject(method = "handleComponentClicked", at = @At("HEAD"))
+    /*@Inject(method = "handleComponentClicked", at = @At("HEAD"))
     private void chattweaks$safeChatClicksHistory(@Nullable Style style, CallbackInfoReturnable<Boolean> cir) {
         if (!ChatTweaks.config.safeChatClicksHistory || style == null || !((Object) this instanceof ChatScreen)) {
             return;
@@ -38,5 +38,5 @@ public abstract class ScreenMixin {
             ChatCompat.addRecentChat(ChatCompat.safeClickValue(clickEvent));
         }
     }
-    //?}
+    *///?}
 }
