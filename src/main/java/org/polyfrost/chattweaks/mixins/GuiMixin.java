@@ -20,9 +20,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-// <26.1: immediate GuiGraphics pipeline, hook Gui#render.
-// 26.1:  deferred render-state extractor, hook Gui#extractRenderState.
-// 26.2+: HUD split out of Gui, hook Hud#extractRenderState.
+// <26.1 hooks Gui#render and 26.1 hooks Gui#extractRenderState and 26.2+ hooks Hud#extractRenderState
 //? if <26.2 {
 /*@Mixin(Gui.class)
 *///?} else {

@@ -80,8 +80,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
         return false;
     }
 
-    // 1.21.11 removed screenToChatX/Y and getMessageLineIndexAt from ChatComponent;
-    // reimplement them from the still-present geometry primitives.
+    // 1.21.11 dropped screenToChatX/Y and getMessageLineIndexAt so rebuild them from geometry primitives
     @Unique
     private double chattweaks$screenToChatX(double d) {
         return d / this.getScale() - 4.0;
@@ -141,8 +140,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
         return false;
     }
 
-    // 26.1+ removed screenToChatX/Y, getMessageLineIndexAt AND isChatHidden from
-    // ChatComponent; reimplement hit-testing from the surviving geometry primitives.
+    // 26.1+ dropped screenToChatX/Y getMessageLineIndexAt and isChatHidden so rebuild hit testing here
     @Unique
     private double chattweaks$screenToChatX(double d) {
         return d / this.getScale() - 4.0;

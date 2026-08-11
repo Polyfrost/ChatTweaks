@@ -38,9 +38,8 @@ public final class ImagePreview {
     private static int imageWidth = 100;
     private static int imageHeight = 100;
 
-    // <26.1 receives the immediate GuiGraphics; 26.1+ receives the deferred
-    // GuiGraphicsExtractor. Both expose the same blit(RenderPipeline, ...) overload,
-    // so only the parameter type differs (see GuiMixin for the matching hooks).
+    // <26.1 gets the immediate GuiGraphics and 26.1+ gets the deferred GuiGraphicsExtractor
+    // both expose the same blit overload so only the parameter type differs
     //? if <26.1 {
     /*public static void render(GuiGraphics graphics) {
     *///?} else {
@@ -127,8 +126,7 @@ public final class ImagePreview {
             drawWidth = drawHeight * aspectRatio;
         }
 
-        // On 26.1+ the extractor batches draws per stratum; advance to a fresh one so the
-        // preview lands on top of the rest of the HUD instead of behind it.
+        // the 26.1+ extractor batches draws per stratum so a fresh one puts the preview above the HUD
         //? if >=26.1 {
         graphics.nextStratum();
         //?}

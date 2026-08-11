@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "${id}",
-  "version": "${version}",
-  "name": "${name}",
+  "id": "${mod_id}",
+  "version": "${mod_version}",
+  "name": "${mod_name}",
   "authors": [
     "Polyfrost"
   ],
@@ -22,8 +22,8 @@
     "chattweaks.mixins.json"
   ],
   "depends": {
-    "minecraft": "${minecraft}",
-    "fabricloader": ">=0.15.11"
+    "minecraft": "${minecraft_version_range}",
+    "fabricloader": ">=${loader_version}"
   },
   "breaks": {
     "chatpatches": "*"
