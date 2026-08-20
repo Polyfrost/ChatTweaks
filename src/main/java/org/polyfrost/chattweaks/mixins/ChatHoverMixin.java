@@ -23,6 +23,21 @@ public abstract class ChatHoverMixin implements HoveredUrl {
     @Unique
     private static final Pattern chattweaks$URL = Pattern.compile("https?://\\S+");
 
+    @Unique
+    private static final Pattern chattweaks$IMAGE_FILE =
+            Pattern.compile("[^\\s\\\\/:*?\"<>|]+\\.(?:png|jpe?g|gif|webp|bmp)", Pattern.CASE_INSENSITIVE);
+
+    @Unique
+    @Nullable
+    private static String chattweaks$match(String line) {
+        Matcher matcher = chattweaks$URL.matcher(line);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        matcher = chattweaks$IMAGE_FILE.matcher(line);
+        return matcher.find() ? matcher.group() : null;
+    }
+
     //? if <1.21.11 {
     /*@Shadow
     @Final
@@ -186,8 +201,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
             return true;
         });
 
-        Matcher matcher = chattweaks$URL.matcher(line.toString());
-        return matcher.find() ? matcher.group() : null;
+        return chattweaks$match(line.toString());
         *///?} elif <26.1 {
         /*double chatX = chattweaks$screenToChatX(mouseX);
         double chatY = chattweaks$screenToChatY(mouseY);
@@ -202,8 +216,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
             return true;
         });
 
-        Matcher matcher = chattweaks$URL.matcher(line.toString());
-        return matcher.find() ? matcher.group() : null;
+        return chattweaks$match(line.toString());
         *///?} else {
         double chatX = chattweaks$screenToChatX(mouseX);
         double chatY = chattweaks$screenToChatY(mouseY);
@@ -218,8 +231,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
             return true;
         });
 
-        Matcher matcher = chattweaks$URL.matcher(line.toString());
-        return matcher.find() ? matcher.group() : null;
+        return chattweaks$match(line.toString());
         //?}
     }
 }

@@ -8,18 +8,48 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class ChatUtils {
+    public static final int VANILLA_CHAT_LIMIT = 256;
+
+    public static final int COMMAND_LIMIT = 32500;
+
+    private static final Pattern WHITESPACE = Pattern.compile("\\s+");
+    private static final int MIN_FUZZY_LENGTH = 3;
     private static final Pattern TIMESTAMP = Pattern.compile("(?i)^\\S{0,3}?\\d\\d?:\\d\\d(?::\\d\\d)?(?: ?[AP]M)?\\S{0,3}? ");
     private static final Pattern COUNTER = Pattern.compile(" (?:[(\\[{<]x?(\\d+)x?[)\\]}>]|x(\\d+)|(\\d+)x)\\s*$");
     private static final String[] COUNTER_BRACKETS = {"()", "[]", "{}", "<>", "()", "[]", "{}", "<>"};
     private static final String[] TIMESTAMP_BRACKETS = {"[]", "()", "{}", "<>"};
     private static final Pattern COLOR = Pattern.compile("(?i)\\u00A7.");
 
+    public static boolean isCommand(String message) {
+        return !message.isEmpty() && message.charAt(0) == '/';
+    }
+
+    public static String normalizeUntrimmed(String message) {
+        return WHITESPACE.matcher(message.trim()).replaceAll(" ").trim();
+    }
+
+    public static boolean fuzzyMatches(String candidate, String typed) {
+        if (typed.isEmpty() || candidate.contains(typed)) {
+            return true;
+        }
+        if (typed.length() < MIN_FUZZY_LENGTH) {
+            return false;
+        }
+        int matched = 0;
+        for (int i = 0; i < candidate.length() && matched < typed.length(); i++) {
+            if (candidate.charAt(i) == typed.charAt(matched)) {
+                matched++;
+            }
+        }
+        return matched == typed.length();
+    }
+
     public static String cleanColor(String in) {
         return COLOR.matcher(in).replaceAll("");
     }
 
     public static String compactKey(String raw) {
-        String clean = cleanColor(raw);
+        String clean = Spacing.strip(cleanColor(raw));
         clean = TIMESTAMP.matcher(clean).replaceAll("");
         clean = COUNTER.matcher(clean).replaceAll("");
         return clean.trim();

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -87,6 +88,16 @@ public final class ChatCompat {
         return mc.gui.hud.getGuiTicks();
         //?} else {
         /*return mc.gui.getGuiTicks();
+        *///?}
+    }
+
+    @Nullable
+    public static Screen getScreen() {
+        Minecraft mc = Minecraft.getInstance();
+        //? if >=26.2 {
+        return mc.gui.screen();
+        //?} else {
+        /*return mc.screen;
         *///?}
     }
 

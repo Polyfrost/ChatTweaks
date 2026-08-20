@@ -187,6 +187,20 @@ public class ChatTweaksConfig extends Config {
     public boolean shiftChat;
 
     @Switch(
+            title = "Bypass Command Length Limit",
+            description = "Let commands go past the 256 character limit vanilla puts on chat.",
+            subcategory = "Commands"
+    )
+    public boolean bypassCommandLimit = true;
+
+    @Switch(
+            title = "Fuzzy Command Suggestions",
+            description = "Suggest commands that contain what you typed instead of only the ones starting with it.",
+            subcategory = "Commands"
+    )
+    public boolean fuzzyCommandSuggestions = true;
+
+    @Switch(
             title = "Safe Chat Clicks",
             description = "Show the command or link that is run/opened on click. ",
             subcategory = "Safe Chat Clicks"
@@ -203,15 +217,16 @@ public class ChatTweaksConfig extends Config {
     @Switch(
             title = "Image Preview",
             description = "Preview image links when hovering over a supported URL." +
-                    "\nPress Shift to use fullscreen and Control to render in native image resolution.",
+                    "\nHold Shift to fit the preview to the window.",
             subcategory = "Image Preview"
     )
     public boolean imagePreview = true;
 
     @Slider(
             title = "Image Preview Width",
-            description = "The % of screen width to be used for image preview.",
-            subcategory = "Image Preview"
+            description = "The % of screen width the small preview uses. Hold Shift to fit the image to the window instead.",
+            subcategory = "Image Preview",
+            min = 5, max = 50, step = 1
     )
-    public float imagePreviewWidth = 50F;
+    public float imagePreviewWidth = 25F;
 }

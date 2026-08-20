@@ -1,8 +1,8 @@
 package org.polyfrost.chattweaks.mixins;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MessageSignature;
@@ -12,6 +12,8 @@ import net.minecraft.network.chat.TextColor;
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.util.ChatCompat;
 import org.polyfrost.chattweaks.util.ChatUtils;
+import org.polyfrost.chattweaks.util.Spacing;
+import org.polyfrost.chattweaks.util.TimestampWidths;
 import org.spongepowered.asm.mixin.*;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -35,15 +37,10 @@ public abstract class ChatComponentMixin {
     @Unique
     private static final Map<String, Long> chattweaks$lastSeen = new HashMap<>();
     @Unique
-    private static boolean chattweaks$reentrant = false;
-    @Unique
     private static String chattweaks$lastStamp = "";
+    @Unique
+    private static int chattweaks$stampWidth = 0;
 
-    //? if >=26.1 {
-    @Shadow
-    private void addMessage(Component component, MessageSignature signature, net.minecraft.client.multiplayer.chat.GuiMessageSource source, GuiMessageTag tag) {
-    }
-    //?}
     @Shadow
     @Final
     private List<GuiMessage> allMessages;
@@ -55,13 +52,23 @@ public abstract class ChatComponentMixin {
 
     @Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/multiplayer/chat/GuiMessageSource;Lnet/minecraft/client/multiplayer/chat/GuiMessageTag;)V", at = @At("HEAD"), cancellable = true)
     private void chattweaks$onAddMessage(Component component, MessageSignature signature, net.minecraft.client.multiplayer.chat.GuiMessageSource source, GuiMessageTag tag, CallbackInfo ci) {
-        chattweaks$handleAdd(component, signature, source, tag, ci);
+        chattweaks$dropBlank(component, ci);
     }
-    
+
+    @ModifyVariable(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/multiplayer/chat/GuiMessageSource;Lnet/minecraft/client/multiplayer/chat/GuiMessageTag;)V", at = @At("HEAD"), argsOnly = true)
+    private Component chattweaks$decorateMessage(Component component) {
+        return chattweaks$decorate(component);
+    }
+
     //?} else {
     /*@Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V", at = @At("HEAD"), cancellable = true)
     private void chattweaks$onAddMessage(Component component, MessageSignature signature, GuiMessageTag tag, CallbackInfo ci) {
-        chattweaks$handleAdd(component, signature, null, tag, ci);
+        chattweaks$dropBlank(component, ci);
+    }
+
+    @ModifyVariable(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V", at = @At("HEAD"), argsOnly = true, ordinal = 0)
+    private Component chattweaks$decorateMessage(Component component) {
+        return chattweaks$decorate(component);
     }
     *///?}
 
@@ -71,40 +78,22 @@ public abstract class ChatComponentMixin {
     }
 
     @Unique
-    private void chattweaks$handleAdd(Component component, MessageSignature signature, Object source, Object tag, CallbackInfo ci) {
-        if (chattweaks$reentrant) {
+    private void chattweaks$dropBlank(Component component, CallbackInfo ci) {
+        if (!ChatTweaks.config.removeBlankMessages) {
             return;
         }
-
-        String clean = ChatUtils.cleanColor(component.getString()).trim();
-
-        if (ChatTweaks.config.removeBlankMessages && clean.isEmpty()) {
+        if (ChatUtils.cleanColor(component.getString()).trim().isEmpty()) {
             ci.cancel();
-            return;
-        }
-
-        Component result = component;
-        result = chattweaks$applyTimestamp(result);
-        result = chattweaks$applyCompact(result);
-
-        if (result != component) {
-            ci.cancel();
-            chattweaks$reentrant = true;
-            try {
-                chattweaks$dispatch(result, signature, source, tag);
-            } finally {
-                chattweaks$reentrant = false;
-            }
         }
     }
 
     @Unique
-    private void chattweaks$dispatch(Component component, MessageSignature signature, Object source, Object tag) {
-        //? if >=26.1 {
-        this.addMessage(component, signature, (net.minecraft.client.multiplayer.chat.GuiMessageSource) source, (GuiMessageTag) tag);
-         //?} else {
-        /*((ChatComponent) (Object) this).addMessage(component, signature, (GuiMessageTag) tag);
-        *///?}
+    private Component chattweaks$decorate(Component component) {
+        chattweaks$stampWidth = 0;
+        Component result = chattweaks$applyTimestamp(component);
+        result = chattweaks$applyCompact(result);
+        TimestampWidths.put(result, chattweaks$stampWidth);
+        return result;
     }
 
     @Unique
@@ -122,12 +111,14 @@ public abstract class ChatComponentMixin {
             String stamp = ChatUtils.formatTimestamp(time) + " ";
             if (ChatTweaks.config.onlyNewTimestamps) {
                 if (stamp.equals(chattweaks$lastStamp)) {
+                    chattweaks$stampWidth = Minecraft.getInstance().font.width(stamp);
                     return Component.empty()
-                            .append(Component.literal(chattweaks$padding(stamp)))
+                            .append(Spacing.of(chattweaks$stampWidth))
                             .append(component);
                 }
                 chattweaks$lastStamp = stamp;
             }
+            chattweaks$stampWidth = Minecraft.getInstance().font.width(stamp);
             return Component.empty()
                     .append(Component.literal(stamp).withStyle(chattweaks$timestampStyle()))
                     .append(component);
@@ -146,17 +137,6 @@ public abstract class ChatComponentMixin {
     @Unique
     private Style chattweaks$timestampStyle() {
         return Style.EMPTY.withColor(TextColor.fromRgb(ChatTweaks.config.timestampsColor.getRGB() & 0xFFFFFF));
-    }
-
-    @Unique
-    private static String chattweaks$padding(String stamp) {
-        Font font = Minecraft.getInstance().font;
-        int spaceWidth = font.width(" ");
-        if (spaceWidth <= 0) {
-            return " ".repeat(stamp.length());
-        }
-        int spaces = Math.round((float) font.width(stamp) / spaceWidth);
-        return " ".repeat(Math.max(1, spaces));
     }
 
     @Unique

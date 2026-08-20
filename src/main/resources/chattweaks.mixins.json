@@ -12,7 +12,10 @@
     "ChatHistoryMixin",
     "ChatHoverMixin",
     "ChatScreenMixin",
+    "ComponentRenderUtilsMixin",
+    "EditBoxMixin",
     "GuiMixin",
+    "LiteralCommandNodeMixin",
     "ScreenMixin",
     "StyleMixin"
   ],
