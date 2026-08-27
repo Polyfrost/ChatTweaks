@@ -8,6 +8,7 @@ import net.minecraft.client.multiplayer.chat.GuiMessage;
 import net.minecraft.client.gui.components.ChatComponent;
 import org.jetbrains.annotations.Nullable;
 import org.polyfrost.chattweaks.util.HoveredUrl;
+import org.polyfrost.chattweaks.util.Spacing;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -184,6 +185,36 @@ public abstract class ChatHoverMixin implements HoveredUrl {
     }
     //?}
 
+    @Shadow
+    @Final
+    private List<GuiMessage> allMessages;
+
+    @Unique
+    private GuiMessage.Line chattweaks$cachedLine;
+
+    @Unique
+    @Nullable
+    private String chattweaks$cachedUrl;
+
+    @Unique
+    private String chattweaks$message(int index) {
+        //? if >=26.1 {
+        GuiMessage message = trimmedMessages.get(index).parent();
+        //?} else {
+        /*int run = -1;
+        for (int i = 0; i <= index; i++) {
+            if (trimmedMessages.get(i).endOfEntry()) {
+                run++;
+            }
+        }
+        if (run < 0 || run >= allMessages.size()) {
+            return null;
+        }
+        GuiMessage message = allMessages.get(run);
+        *///?}
+        return message == null ? null : Spacing.strip(message.content().getString());
+    }
+
     @Override
     @Nullable
     public String chattweaks$hoveredUrl(double mouseX, double mouseY) {
@@ -191,47 +222,21 @@ public abstract class ChatHoverMixin implements HoveredUrl {
         /*double chatX = screenToChatX(mouseX);
         double chatY = screenToChatY(mouseY);
         int index = getMessageLineIndexAt(chatX, chatY);
-        if (index < 0 || index >= trimmedMessages.size()) {
-            return null;
-        }
-
-        StringBuilder line = new StringBuilder();
-        trimmedMessages.get(index).content().accept((idx, style, codePoint) -> {
-            line.appendCodePoint(codePoint);
-            return true;
-        });
-
-        return chattweaks$match(line.toString());
-        *///?} elif <26.1 {
-        /*double chatX = chattweaks$screenToChatX(mouseX);
-        double chatY = chattweaks$screenToChatY(mouseY);
-        int index = chattweaks$getMessageLineIndexAt(chatX, chatY);
-        if (index < 0 || index >= trimmedMessages.size()) {
-            return null;
-        }
-
-        StringBuilder line = new StringBuilder();
-        trimmedMessages.get(index).content().accept((idx, style, codePoint) -> {
-            line.appendCodePoint(codePoint);
-            return true;
-        });
-
-        return chattweaks$match(line.toString());
         *///?} else {
         double chatX = chattweaks$screenToChatX(mouseX);
         double chatY = chattweaks$screenToChatY(mouseY);
         int index = chattweaks$getMessageLineIndexAt(chatX, chatY);
+        //?}
         if (index < 0 || index >= trimmedMessages.size()) {
             return null;
         }
 
-        StringBuilder line = new StringBuilder();
-        trimmedMessages.get(index).content().accept((idx, style, codePoint) -> {
-            line.appendCodePoint(codePoint);
-            return true;
-        });
-
-        return chattweaks$match(line.toString());
-        //?}
+        GuiMessage.Line line = trimmedMessages.get(index);
+        if (line != chattweaks$cachedLine) {
+            chattweaks$cachedLine = line;
+            String text = chattweaks$message(index);
+            chattweaks$cachedUrl = text == null ? null : chattweaks$match(text);
+        }
+        return chattweaks$cachedUrl;
     }
 }

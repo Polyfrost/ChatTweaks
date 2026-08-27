@@ -208,14 +208,14 @@ public final class ImagePreview {
         }
         String trimmed = cut < 0 ? url : url.substring(0, cut);
         if (!trimmed.contains("imgur.com/") || trimmed.contains("i.imgur.com/")) {
-            return trimmed;
+            return url;
         }
         if (trimmed.contains("/a/") || trimmed.contains("/gallery/") || trimmed.contains("/t/")) {
-            return trimmed;
+            return url;
         }
         String id = trimmed.substring(trimmed.lastIndexOf('/') + 1);
         if (id.isEmpty() || id.indexOf('.') >= 0) {
-            return trimmed;
+            return url;
         }
         return "https://i.imgur.com/" + id + ".png";
     }
