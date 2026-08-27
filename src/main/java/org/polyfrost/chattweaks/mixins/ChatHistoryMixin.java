@@ -5,7 +5,9 @@ import net.minecraft.network.chat.Component;
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.features.ChatHistory;
 import org.polyfrost.chattweaks.features.ChatHistoryEntry;
+import org.polyfrost.chattweaks.features.CompactChat;
 import org.polyfrost.chattweaks.util.ChatCompat;
+import org.polyfrost.chattweaks.util.ChatUtils;
 import org.polyfrost.chattweaks.util.ChatHistoryAccess;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -83,6 +85,7 @@ public abstract class ChatHistoryMixin implements ChatHistoryAccess {
             this.allMessages.clear();
             chattweaks$markers.clear();
             chattweaks$sessions.clear();
+            CompactChat.clear();
         }
         if (!restored.isEmpty()) {
             chattweaks$restore(restored);
@@ -132,6 +135,13 @@ public abstract class ChatHistoryMixin implements ChatHistoryAccess {
             Long session = sessions.get(line);
             if (session != null) {
                 chattweaks$sessions.put(line, session);
+            }
+        }
+        for (int i = lines.size() - 1; i >= 0; i--) {
+            GuiMessage line = lines.get(i);
+            String key = ChatUtils.compactKey(line.content().getString());
+            if (!key.isEmpty()) {
+                CompactChat.track(key, line);
             }
         }
         this.allMessages.addAll(lines);

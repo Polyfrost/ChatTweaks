@@ -16,6 +16,7 @@
     "EditBoxMixin",
     "GuiMixin",
     "LiteralCommandNodeMixin",
+    "MutableComponentMixin",
     "ScreenMixin",
     "StyleMixin"
   ],

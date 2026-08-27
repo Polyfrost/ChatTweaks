@@ -18,7 +18,13 @@ public final class ChatUtils {
     private static final Pattern COUNTER = Pattern.compile(" (?:[(\\[{<]x?(\\d+)x?[)\\]}>]|x(\\d+)|(\\d+)x)\\s*$");
     private static final String[] COUNTER_BRACKETS = {"()", "[]", "{}", "<>", "()", "[]", "{}", "<>"};
     private static final String[] TIMESTAMP_BRACKETS = {"[]", "()", "{}", "<>"};
-    private static final Pattern COLOR = Pattern.compile("(?i)\\u00A7.");
+    private static final char COLOR_CHAR = '§';
+
+    private static String timeCache;
+    private static String timeCachePattern;
+    private static long timeCacheSecond = Long.MIN_VALUE;
+    private static String formatterPattern;
+    private static DateTimeFormatter formatter;
 
     public static boolean isCommand(String message) {
         return !message.isEmpty() && message.charAt(0) == '/';
@@ -45,14 +51,59 @@ public final class ChatUtils {
     }
 
     public static String cleanColor(String in) {
-        return COLOR.matcher(in).replaceAll("");
+        int first = in.indexOf(COLOR_CHAR);
+        if (first < 0) {
+            return in;
+        }
+        StringBuilder out = new StringBuilder(in.length()).append(in, 0, first);
+        for (int i = first; i < in.length(); i++) {
+            char c = in.charAt(i);
+            if (c == COLOR_CHAR && i + 1 < in.length() && !isLineTerminator(in.charAt(i + 1))) {
+                i++;
+                continue;
+            }
+            out.append(c);
+        }
+        return out.toString();
+    }
+
+    private static boolean isLineTerminator(char c) {
+        return c == '\n' || c == '\r' || c == '\u0085' || c == '\u2028' || c == '\u2029';
+    }
+
+    public static boolean isBlank(String in) {
+        for (int i = 0; i < in.length(); i++) {
+            char c = in.charAt(i);
+            if (c == COLOR_CHAR && i + 1 < in.length() && !isLineTerminator(in.charAt(i + 1))) {
+                i++;
+                continue;
+            }
+            if (c > ' ') {
+                return false;
+            }
+        }
+        return true;
     }
 
     public static String compactKey(String raw) {
         String clean = Spacing.strip(cleanColor(raw));
         clean = TIMESTAMP.matcher(clean).replaceAll("");
-        clean = COUNTER.matcher(clean).replaceAll("");
+        if (endsLikeCounter(clean)) {
+            clean = COUNTER.matcher(clean).replaceAll("");
+        }
         return clean.trim();
+    }
+
+    private static boolean endsLikeCounter(String clean) {
+        for (int i = clean.length() - 1; i >= 0; i--) {
+            char c = clean.charAt(i);
+            if (Character.isWhitespace(c) || isLineTerminator(c)) {
+                continue;
+            }
+            return c == ')' || c == ']' || c == '}' || c == '>' || c == 'x' || c == 'X'
+                    || (c >= '0' && c <= '9');
+        }
+        return false;
     }
 
     public static int extractCount(String raw) {
@@ -103,7 +154,20 @@ public final class ChatUtils {
         if (ChatTweaks.config.secondsOnTimestamps) {
             pattern = ChatTweaks.config.timestampsFormat == 1 ? "HH:mm:ss" : "hh:mm:ss a";
         }
-        return LocalTime.now().format(DateTimeFormatter.ofPattern(pattern));
+
+        long second = System.currentTimeMillis() / 1000L;
+        if (second == timeCacheSecond && pattern.equals(timeCachePattern)) {
+            return timeCache;
+        }
+        if (!pattern.equals(formatterPattern)) {
+            formatterPattern = pattern;
+            formatter = DateTimeFormatter.ofPattern(pattern);
+        }
+
+        timeCacheSecond = second;
+        timeCachePattern = pattern;
+        timeCache = LocalTime.now().format(formatter);
+        return timeCache;
     }
 
     public static String formatTimestamp(String time) {

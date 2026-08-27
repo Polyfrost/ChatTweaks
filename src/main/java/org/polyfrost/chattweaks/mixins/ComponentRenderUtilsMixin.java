@@ -6,12 +6,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ComponentRenderUtils;
 import net.minecraft.locale.Language;
-import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
+import org.polyfrost.chattweaks.util.MessageMeta;
 import org.polyfrost.chattweaks.util.Spacing;
-import org.polyfrost.chattweaks.util.TimestampWidths;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -26,10 +25,10 @@ import java.util.Optional;
 public class ComponentRenderUtilsMixin {
     @Inject(method = "wrapComponents", at = @At("HEAD"), cancellable = true)
     private static void chattweaks$indentWrappedLines(FormattedText message, int maxWidth, Font font, CallbackInfoReturnable<List<FormattedCharSequence>> cir) {
-        if (!(message instanceof Component component)) {
+        if (!(message instanceof MessageMeta meta)) {
             return;
         }
-        int stampWidth = TimestampWidths.get(component);
+        int stampWidth = meta.chattweaks$getStampWidth();
         if (stampWidth <= 0) {
             return;
         }
