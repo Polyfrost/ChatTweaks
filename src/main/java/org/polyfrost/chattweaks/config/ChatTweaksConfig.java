@@ -84,6 +84,13 @@ public class ChatTweaksConfig extends Config {
     )
     public boolean consecutiveCompactChat;
 
+    @Switch(
+            title = "Don't Compact Screenshots",
+            description = "Leave screenshot messages alone so each one keeps its own file link.",
+            subcategory = "Compact Chat"
+    )
+    public boolean dontCompactScreenshots = true;
+
     @Slider(
             title = "Compact Chat Time",
             description = "Change the amount of time old messages take to stop being compacted. Measured in seconds.",

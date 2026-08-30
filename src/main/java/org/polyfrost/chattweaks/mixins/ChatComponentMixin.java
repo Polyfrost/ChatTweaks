@@ -9,6 +9,7 @@ import net.minecraft.network.chat.MessageSignature;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
 import net.minecraft.network.chat.TextColor;
+import org.jetbrains.annotations.Nullable;
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.features.CompactChat;
 import org.polyfrost.chattweaks.util.ChatCompat;
@@ -144,7 +145,7 @@ public abstract class ChatComponentMixin {
         trimmedMessages.subList(from, to).clear();
 
         if (chatScrollbarPos > 0) {
-            chatScrollbarPos -= Math.min(to - from, Math.max(0, chatScrollbarPos - from));
+            chatScrollbarPos -= Math.clamp(chatScrollbarPos - from, 0, to - from);
         }
     }
 
@@ -162,10 +163,27 @@ public abstract class ChatComponentMixin {
     private Component chattweaks$decorate(Component component) {
         chattweaks$stampWidth = 0;
         String raw = component.getString();
+        String key = chattweaks$compactKey(component, raw);
         Component result = chattweaks$applyTimestamp(component, raw);
-        result = chattweaks$applyCompact(result, raw);
+        result = chattweaks$applyCompact(result, key);
         TimestampWidths.put(result, chattweaks$stampWidth);
         return result;
+    }
+
+    @Unique
+    @Nullable
+    private static String chattweaks$compactKey(Component component, String raw) {
+        if (!ChatTweaks.config.compactChat) {
+            return null;
+        }
+        if (ChatTweaks.config.dontCompactScreenshots && ChatUtils.isScreenshot(component, raw)) {
+            return null;
+        }
+        String key = ChatUtils.compactKey(component, raw);
+        if (key.isEmpty() || ChatUtils.isDivider(raw)) {
+            return null;
+        }
+        return key;
     }
 
     @Unique
@@ -225,13 +243,8 @@ public abstract class ChatComponentMixin {
     }
 
     @Unique
-    private Component chattweaks$applyCompact(Component component, String raw) {
-        if (!ChatTweaks.config.compactChat) {
-            CompactChat.expect(null, null);
-            return component;
-        }
-        String key = ChatUtils.compactKey(raw);
-        if (key.isEmpty() || ChatUtils.isDivider(key)) {
+    private Component chattweaks$applyCompact(Component component, @Nullable String key) {
+        if (key == null) {
             CompactChat.expect(null, null);
             return component;
         }

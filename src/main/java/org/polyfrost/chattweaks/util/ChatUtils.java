@@ -1,5 +1,10 @@
 package org.polyfrost.chattweaks.util;
 
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.HoverEvent;
+import net.minecraft.network.chat.Style;
+import net.minecraft.network.chat.contents.TranslatableContents;
 import org.polyfrost.chattweaks.ChatTweaks;
 
 import java.time.LocalTime;
@@ -19,6 +24,10 @@ public final class ChatUtils {
     private static final String[] COUNTER_BRACKETS = {"()", "[]", "{}", "<>", "()", "[]", "{}", "<>"};
     private static final String[] TIMESTAMP_BRACKETS = {"[]", "()", "{}", "<>"};
     private static final char COLOR_CHAR = '§';
+    private static final String SCREENSHOT_KEY = "screenshot";
+    private static final String[] IMAGE_EXTENSIONS = {".png", ".jpg", ".jpeg", ".webp", ".gif"};
+    private static final int MAX_SIGNATURE = 128;
+    private static final char SIGNATURE_SEPARATOR = '\u0000';
 
     private static String timeCache;
     private static String timeCachePattern;
@@ -83,6 +92,115 @@ public final class ChatUtils {
             }
         }
         return true;
+    }
+
+    public static boolean isScreenshot(Component component, String raw) {
+        return hasImagePath(raw) || hasScreenshotMarker(component);
+    }
+
+    private static boolean hasScreenshotMarker(Component component) {
+        if (component.getContents() instanceof TranslatableContents translatable
+                && containsIgnoreCase(translatable.getKey(), SCREENSHOT_KEY)) {
+            return true;
+        }
+        ClickEvent click = component.getStyle().getClickEvent();
+        if (click != null) {
+            String value = ChatCompat.safeClickValue(click);
+            if (value != null && (containsIgnoreCase(value, SCREENSHOT_KEY) || isImagePath(value))) {
+                return true;
+            }
+        }
+        for (Component sibling : component.getSiblings()) {
+            if (hasScreenshotMarker(sibling)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean isImagePath(String value) {
+        int end = value.length();
+        for (int i = 0; i < end; i++) {
+            char c = value.charAt(i);
+            if (c == '?' || c == '#') {
+                end = i;
+                break;
+            }
+        }
+        for (String extension : IMAGE_EXTENSIONS) {
+            int start = end - extension.length();
+            if (start > 0 && value.regionMatches(true, start, extension, 0, extension.length())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean hasImagePath(String raw) {
+        for (String extension : IMAGE_EXTENSIONS) {
+            int from = 0;
+            while (true) {
+                int at = indexOfIgnoreCase(raw, extension, from);
+                if (at < 0) {
+                    break;
+                }
+                int after = at + extension.length();
+                if (at > 0 && (after == raw.length() || !Character.isLetterOrDigit(raw.charAt(after)))) {
+                    return true;
+                }
+                from = at + 1;
+            }
+        }
+        return false;
+    }
+
+    private static boolean containsIgnoreCase(String value, String needle) {
+        return indexOfIgnoreCase(value, needle, 0) >= 0;
+    }
+
+    private static int indexOfIgnoreCase(String value, String needle, int from) {
+        int limit = value.length() - needle.length();
+        for (int i = Math.max(from, 0); i <= limit; i++) {
+            if (value.regionMatches(true, i, needle, 0, needle.length())) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    public static String compactKey(Component component, String raw) {
+        String key = compactKey(raw);
+        if (key.isEmpty()) {
+            return key;
+        }
+        StringBuilder events = new StringBuilder();
+        appendEvents(component, events);
+        if (events.isEmpty()) {
+            return key;
+        }
+        String signature = events.length() > MAX_SIGNATURE
+                ? Integer.toHexString(events.toString().hashCode())
+                : events.toString();
+        return key + SIGNATURE_SEPARATOR + signature;
+    }
+
+    private static void appendEvents(Component component, StringBuilder out) {
+        Style style = component.getStyle();
+        ClickEvent click = style.getClickEvent();
+        if (click != null) {
+            out.append(SIGNATURE_SEPARATOR).append(click);
+        }
+        HoverEvent hover = style.getHoverEvent();
+        if (hover != null) {
+            out.append(SIGNATURE_SEPARATOR).append(hover);
+        }
+        String insertion = style.getInsertion();
+        if (insertion != null) {
+            out.append(SIGNATURE_SEPARATOR).append(insertion);
+        }
+        for (Component sibling : component.getSiblings()) {
+            appendEvents(sibling, out);
+        }
     }
 
     public static String compactKey(String raw) {

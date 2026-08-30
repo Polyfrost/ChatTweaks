@@ -36,6 +36,14 @@ public final class ChatCompat {
         *///?}
     }
 
+    public static boolean isOpenFile(ClickEvent event) {
+        //? if >=1.21.5 {
+        return event instanceof ClickEvent.OpenFile;
+        //?} else {
+        /*return event.getAction() == ClickEvent.Action.OPEN_FILE;
+        *///?}
+    }
+
     public static boolean isOpenUrl(ClickEvent event) {
         //? if >=1.21.5 {
         return event instanceof ClickEvent.OpenUrl;

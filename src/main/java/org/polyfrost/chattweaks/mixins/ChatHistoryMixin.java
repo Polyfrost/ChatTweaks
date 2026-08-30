@@ -139,7 +139,7 @@ public abstract class ChatHistoryMixin implements ChatHistoryAccess {
         }
         for (int i = lines.size() - 1; i >= 0; i--) {
             GuiMessage line = lines.get(i);
-            String key = ChatUtils.compactKey(line.content().getString());
+            String key = ChatUtils.compactKey(line.content(), line.content().getString());
             if (!key.isEmpty()) {
                 CompactChat.track(key, line);
             }
