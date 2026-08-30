@@ -27,7 +27,7 @@ public abstract class LiteralCommandNodeMixin {
 
     @Inject(method = "listSuggestions", at = @At("HEAD"), cancellable = true)
     private void chattweaks$fuzzySuggestions(CommandContext<?> context, SuggestionsBuilder builder, CallbackInfoReturnable<CompletableFuture<Suggestions>> cir) {
-        if (ChatTweaks.config == null || !ChatTweaks.config.fuzzyCommandSuggestions) {
+        if (ChatTweaks.config == null || !ChatTweaks.config.fuzzyAutocomplete) {
             return;
         }
         String typed = builder.getRemainingLowerCase();
