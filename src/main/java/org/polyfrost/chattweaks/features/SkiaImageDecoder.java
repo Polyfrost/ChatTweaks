@@ -16,7 +16,7 @@ final class SkiaImageDecoder {
         }
         try {
             try (Image image = Image.Companion.makeFromEncoded(bytes)) {
-                Data data = image.encodeToData(EncodedImageFormat.PNG, 100);
+                Data data = image.encodeToData(EncodedImageFormat.PNG, 100, 6);
                 try (data) {
                     if (data == null) {
                         return null;
