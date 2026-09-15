@@ -1,3 +1,2 @@
-## 1.1.4
-- Added an option to not compact screenshots
-- Made fuzzy autocomplete disabled by default
+## 1.2.0
+- Added support for Minecraft 26.3
