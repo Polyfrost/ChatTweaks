@@ -12,7 +12,6 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
-import org.lwjgl.glfw.GLFW;
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.util.ChatCompat;
 import org.polyfrost.chattweaks.util.HoveredUrl;
@@ -229,7 +228,7 @@ public final class ImagePreview {
         Window window = mc.getWindow();
         int guiWidth = window.getGuiScaledWidth();
         int guiHeight = window.getGuiScaledHeight();
-        boolean expanded = ChatCompat.isKeyDown(GLFW.GLFW_KEY_LEFT_SHIFT) || ChatCompat.isKeyDown(GLFW.GLFW_KEY_RIGHT_SHIFT);
+        boolean expanded = ChatCompat.isShiftDown();
 
         int maxContentWidth = Math.max(48, guiWidth - (MARGIN + PADDING) * 2);
 

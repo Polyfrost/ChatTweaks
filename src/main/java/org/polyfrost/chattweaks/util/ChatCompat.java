@@ -1,7 +1,5 @@
 package org.polyfrost.chattweaks.util;
 
-import com.mojang.blaze3d.platform.InputConstants;
-import com.mojang.blaze3d.platform.Window;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.client.gui.screens.Screen;
@@ -72,12 +70,11 @@ public final class ChatCompat {
         *///?}
     }
 
-    public static boolean isKeyDown(int glfwKey) {
-        Window window = Minecraft.getInstance().getWindow();
+    public static boolean isShiftDown() {
         //? if >=1.21.10 {
-        return InputConstants.isKeyDown(window, glfwKey);
+        return Minecraft.getInstance().hasShiftDown();
         //?} else {
-        /*return InputConstants.isKeyDown(window.getWindow(), glfwKey);
+        /*return Screen.hasShiftDown();
         *///?}
     }
 

@@ -18,9 +18,14 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+//? if >=1.21.10 {
+import net.minecraft.client.input.KeyEvent;
+//?} else {
+/*import net.minecraft.client.gui.screens.Screen;
+*///?}
+
 @Mixin(ChatScreen.class)
 public abstract class ChatScreenMixin implements ChatInputAccess {
-
     @Shadow
     protected EditBox input;
 
@@ -55,17 +60,17 @@ public abstract class ChatScreenMixin implements ChatInputAccess {
 
     //? if >=1.21.10 {
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
-    private void chattweaks$shiftChat(net.minecraft.client.input.KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
+    private void chattweaks$shiftChat(KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
+        boolean shiftDown = event.hasShiftDown();
+        boolean enter = event.isConfirmation();
     //?} else {
     /*@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
     private void chattweaks$shiftChat(int keyCode, int scanCode, int modifiers, CallbackInfoReturnable<Boolean> cir) {
+        boolean shiftDown = Screen.hasShiftDown();
+        boolean enter = keyCode == 257 || keyCode == 335;
     *///?}
-        var shiftDown = /*?if >= 1.21.10 {*/ event.hasShiftDown(); /*?} else*/ //net.minecraft.client.gui.screens.Screen.hasShiftDown();
 
-        //? if >= 1.21.10
-        int keyCode = event.key();
-
-        if (ChatTweaks.config.shiftChat && shiftDown && (keyCode == 257 || keyCode == 335)) {
+        if (ChatTweaks.config.shiftChat && shiftDown && enter) {
             handleChatInput(input.getValue(), true);
             input.setValue("");
             cir.setReturnValue(true);
