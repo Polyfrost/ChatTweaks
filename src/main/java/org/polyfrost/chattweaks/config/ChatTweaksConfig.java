@@ -10,7 +10,7 @@ import org.polyfrost.oneconfig.api.config.v1.annotations.Text;
 
 public class ChatTweaksConfig extends Config {
     public ChatTweaksConfig() {
-        super(ChatTweaks.ID + ".json", ChatTweaks.NAME, Category.QOL);
+        super(ChatTweaks.ID + ".json", "/assets/chattweaks/chattweaks_dark.svg", ChatTweaks.NAME, Category.QOL);
 
         loadFrom("patcher.toml");
     }
