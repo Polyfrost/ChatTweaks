@@ -9,6 +9,7 @@ import net.minecraft.client.gui.Font;
 *///?} else {
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?}
+//? if > 1.8.9
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
@@ -152,11 +153,16 @@ public final class ImagePreview {
 
         //? if >=1.21.5 {
         DynamicTexture dynamicTexture = new DynamicTexture(() -> "chattweaks/preview", image);
-        //?} else {
+        //?} elif > 1.8.9 {
         /*DynamicTexture dynamicTexture = new DynamicTexture(image);
+        *///?} else {
+        /*DynamicTexture dynamicTexture = new DynamicTexture(image.image());
         *///?}
+        //? if > 1.8.9 {
         entry.texture = Identifier.fromNamespaceAndPath("chattweaks", "preview_" + (textureCounter++));
         mc.getTextureManager().register(entry.texture, dynamicTexture);
+        //?} else
+        //entry.texture = mc.getTextureManager().register("chattweaks_preview", dynamicTexture);
         entry.imageWidth = image.getWidth();
         entry.imageHeight = image.getHeight();
     }
@@ -366,8 +372,10 @@ public final class ImagePreview {
         /*TooltipRenderUtil.renderTooltipBackground(graphics, x, y, width, height, null);
         *///?} elif >=1.21.4 {
         /*TooltipRenderUtil.renderTooltipBackground(graphics, x, y, width, height, 400, null);
-        *///?} else {
+        *///?} elif > 1.8.9 {
         /*TooltipRenderUtil.renderTooltipBackground(graphics, x, y, width, height, 400);
+        *///?} else {
+        /*graphics.renderTooltipBackground(x, y, width, height);
         *///?}
     }
 

@@ -3,6 +3,8 @@ package org.polyfrost.chattweaks.config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.OptionInstance;
 import net.minecraft.client.Options;
+//? if = 1.8.9
+//import org.polyfrost.chattweaks.compat.OptionsCompat;
 import org.polyfrost.oneconfig.api.config.v1.Properties;
 import org.polyfrost.oneconfig.api.config.v1.Property;
 import org.polyfrost.oneconfig.api.config.v1.Tree;
@@ -22,6 +24,7 @@ public final class VanillaChatOptions {
     }
 
     public static void attach(Tree tree) {
+        //~ if =1.8.9 'Options::' -> 'OptionsCompat::' {
         tree.put(dropdown("vanilla_chat_visibility", "Chat Visibility",
                 "Which messages are shown in chat.",
                 new String[]{"Shown", "Commands Only", "Hidden"},
@@ -33,6 +36,8 @@ public final class VanillaChatOptions {
                 "Make links in chat clickable.", BEHAVIOR, Options::chatLinks, false));
         tree.put(toggle("vanilla_chat_links_prompt", "Prompt on Links",
                 "Ask for confirmation before opening a link from chat.", BEHAVIOR, Options::chatLinksPrompt, false));
+        //~}
+        //? if > 1.8.9 {
         tree.put(toggle("vanilla_auto_suggestions", "Command Suggestions",
                 "Show command suggestions while typing.", BEHAVIOR, Options::autoSuggestions, false));
         tree.put(toggle("vanilla_hide_matched_names", "Hide Matched Names",
@@ -48,6 +53,7 @@ public final class VanillaChatOptions {
         tree.put(slider("vanilla_chat_delay", "Chat Delay",
                 "Delay before received messages are shown, in seconds.", BEHAVIOR,
                 Options::chatDelay, 1f, 0f, 6f, 0.1f));
+        //?}
     }
 
     private static Property<Boolean> toggle(String id, String title, String description, String subcategory,
@@ -68,6 +74,7 @@ public final class VanillaChatOptions {
         return decorate(property, Visualizer.SwitchVisualizer.class, title, description, subcategory);
     }
 
+    //? if > 1.8.9 {
     private static Property<Float> slider(String id, String title, String description, String subcategory,
                                           Function<Options, OptionInstance<Double>> accessor,
                                           float scale, float min, float max, float step) {
@@ -92,6 +99,7 @@ public final class VanillaChatOptions {
         property.addMetadata("step", step);
         return property;
     }
+    //?}
 
     private static Property<Integer> dropdown(String id, String title, String description, String[] labels,
                                               Function<Options, OptionInstance<?>> accessor, boolean broadcast) {

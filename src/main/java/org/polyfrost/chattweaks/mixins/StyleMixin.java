@@ -6,6 +6,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+//? if = 1.8.9
+//import net.minecraft.text.LiteralText;
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.util.ChatCompat;
 import org.spongepowered.asm.mixin.Final;
@@ -19,6 +21,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class StyleMixin {
 
     @Shadow
+    //? if > 1.8.9
     @Final
     ClickEvent clickEvent;
 
@@ -37,9 +40,15 @@ public abstract class StyleMixin {
         }
 
         String verb = ChatCompat.isRunCommand(event) ? "Runs " : "Opens ";
+        //? if > 1.8.9 {
         MutableComponent hint = Component.literal(verb).withStyle(ChatFormatting.GRAY)
                 .append(Component.literal(value).withStyle(ChatFormatting.YELLOW))
                 .append(Component.literal(" on click.").withStyle(ChatFormatting.GRAY));
+        //?} else {
+        /*Component hint = new LiteralText(verb).setStyle(new Style().setColor(ChatFormatting.GRAY))
+                .append(new LiteralText(value).setStyle(new Style().setColor(ChatFormatting.YELLOW)))
+                .append(new LiteralText(" on click.").setStyle(new Style().setColor(ChatFormatting.GRAY)));
+        *///?}
 
         HoverEvent current = cir.getReturnValue();
         if (current == null) {

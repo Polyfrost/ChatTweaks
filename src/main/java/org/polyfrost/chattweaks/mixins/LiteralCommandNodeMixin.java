@@ -1,5 +1,7 @@
 package org.polyfrost.chattweaks.mixins;
 
+//? if > 1.8.9 {
+
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
@@ -39,3 +41,4 @@ public abstract class LiteralCommandNodeMixin {
         }
     }
 }
+//?}

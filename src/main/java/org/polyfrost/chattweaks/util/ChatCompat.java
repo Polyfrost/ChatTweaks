@@ -66,7 +66,8 @@ public final class ChatCompat {
         //? if >=1.21.5 {
         return hover instanceof HoverEvent.ShowText st ? st.value() : null;
         //?} else {
-        /*return hover.getAction() == HoverEvent.Action.SHOW_TEXT ? hover.getValue(HoverEvent.Action.SHOW_TEXT) : null;
+        /*//~ if =1.8.9 'getValue(HoverEvent.Action.SHOW_TEXT)' -> 'getValue()'
+        return hover.getAction() == HoverEvent.Action.SHOW_TEXT ? hover.getValue(HoverEvent.Action.SHOW_TEXT) : null;
         *///?}
     }
 
@@ -112,7 +113,7 @@ public final class ChatCompat {
 
     @Nullable
     public static Style hoveredChatStyle(double mouseX, double mouseY) {
-        //? if >=1.21.11 {
+        //? if >=1.21.11 || =1.8.9 {
         return null;
         //?} else {
         /*return getChat().getClickedComponentStyleAt(mouseX, mouseY);

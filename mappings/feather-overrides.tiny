@@ -1,0 +1,68 @@
+tiny	2	0	intermediary	named
+c	net/minecraft/client/Minecraft	net/minecraft/client/Minecraft
+	f	Ljava/io/File;	f_25803373	gameDirectory
+	m	()Lnet/minecraft/unmapped/C_29144146;	m_37046522	getSingleplayerServer
+	f	Lnet/minecraft/unmapped/C_23014920;	f_21497584	font
+	f	Lnet/minecraft/unmapped/C_91543234;	f_32571834	currentServer
+	m	()Lnet/minecraft/unmapped/C_88014908;	m_55181026	getConnection
+	m	()Lnet/minecraft/unmapped/C_91543234;	m_73689431	getCurrentServer
+c	net/minecraft/unmapped/C_16178213	net/minecraft/client/gui/components/EditBox
+	m	(Ljava/lang/String;)V	m_27672042	insertText
+	m	(Ljava/lang/String;)V	m_31911570	setValue
+	m	()Ljava/lang/String;	m_79292215	getValue
+	m	(Z)V	m_43135179	setCanLoseFocus
+c	net/minecraft/unmapped/C_22168528	net/minecraft/resources/ResourceLocation
+c	net/minecraft/unmapped/C_23014920	net/minecraft/client/gui/Font
+	f	I	f_30706543	lineHeight
+	m	(Ljava/lang/String;)I	m_09235706	width
+	m	(C)I	m_11668766	width
+c	net/minecraft/unmapped/C_32220415	net/minecraft/server/Bootstrap
+	m	()V	m_84022598	bootStrap
+c	net/minecraft/unmapped/C_40996800	net/minecraft/world/entity/player/Player
+c	net/minecraft/unmapped/C_45510667	net/minecraft/util/Mth
+c	net/minecraft/unmapped/C_49122968	net/minecraft/ChatFormatting
+	m	(Ljava/lang/String;)Ljava/lang/String;	m_43649046	stripFormatting
+c	net/minecraft/unmapped/C_50927867	net/minecraft/network/chat/Style
+c	net/minecraft/unmapped/C_51094326	net/minecraft/client/gui/components/ChatComponent
+	m	(Ljava/lang/String;)V	m_23422763	addRecentChat
+	f	Ljava/util/List;	f_59243976	allMessages
+	f	I	f_01826520	chatScrollbarPos
+	m	()V	m_72776213	resetChatScroll
+	m	(I)V	m_43105399	scrollChat
+	m	()V	m_27568887	refreshTrimmedMessages
+	m	()F	m_22474860	getScale
+	m	()I	m_81289727	getLinesPerPage
+c	net/minecraft/unmapped/C_63704535	net/minecraft/client/gui/screens/ChatScreen
+	f	Lnet/minecraft/unmapped/C_16178213;	f_48091600	input
+c	net/minecraft/unmapped/C_66554568	net/minecraft/client/renderer/texture/DynamicTexture
+c	net/minecraft/unmapped/C_76792751	net/minecraft/client/Options
+	m	()V	m_92015435	broadcastOptions
+c	net/minecraft/unmapped/C_76792751$C_92207510	net/minecraft/client/Options$Option
+c	net/minecraft/unmapped/C_82920792	net/minecraft/client/render/texture/TextureManager
+	m	(Lnet/minecraft/unmapped/C_22168528;)V	m_85604610	release
+	m	(Lnet/minecraft/unmapped/C_22168528;)Lnet/minecraft/unmapped/C_65241354;	m_17123242	getTexture
+c	net/minecraft/unmapped/C_85125467	net/minecraft/client/gui/components/Button
+c	net/minecraft/unmapped/C_85740840	net/minecraft/client/gui/screens/Screen
+	m	()Z	m_31868779	hasShiftDown
+	f	Lnet/minecraft/unmapped/C_23014920;	f_11884601	font
+c	net/minecraft/unmapped/C_88014908	net/minecraft/client/multiplayer/ClientPacketListener
+	m	(Ljava/util/UUID;)Lnet/minecraft/unmapped/C_97147141;	m_00890679	getPlayerInfo
+	m	(Ljava/lang/String;)Lnet/minecraft/unmapped/C_97147141;	m_86503790	getPlayerInfo
+c	net/minecraft/unmapped/C_95231345	net/minecraft/network/chat/Component
+c	net/minecraft/unmapped/C_97147141	net/minecraft/client/multiplayer/PlayerInfo
+	m	()Lnet/minecraft/unmapped/C_95231345;	m_93267006	getTabListDisplayName
+c	net/minecraft/unmapped/C_46155730	net/minecraft/client/GuiMessage
+	m	()Lnet/minecraft/unmapped/C_95231345;	m_15183391	content
+c	net/minecraft/unmapped/C_97866173	net/minecraft/client/gui/GameGui
+	m	()I	m_76131799	getGuiTicks
+c	net/minecraft/unmapped/C_91543234	net/minecraft/client/multiplayer/ServerData
+c	net/minecraft/unmapped/C_95231345$C_25179823	net/minecraft/network/chat/Component$Serializer
+c	net/minecraft/unmapped/C_34533977	net/minecraft/network/chat/MutableComponent
+c	net/minecraft/unmapped/C_47749898	net/minecraft/network/chat/HoverEvent
+c	net/minecraft/unmapped/C_47749898$C_56863378	net/minecraft/network/chat/HoverEvent$Action
+c	net/minecraft/unmapped/C_63482794	net/minecraft/network/chat/ClickEvent
+c	net/minecraft/unmapped/C_63482794$C_03200280	net/minecraft/network/chat/ClickEvent$Action
+c	net/minecraft/unmapped/C_52592795	net/minecraft/network/chat/contents/TranslatableContents
+c	net/minecraft/unmapped/C_76333330	net/minecraft/client/gui/components/ComponentRenderUtils
+c	net/minecraft/unmapped/C_29144146	net/minecraft/client/server/IntegratedServer
+c	net/minecraft/unmapped/C_40996800$C_42934102	net/minecraft/world/entity/player/Player$ChatVisibility

@@ -1,12 +1,21 @@
 package org.polyfrost.chattweaks.features;
 
+//? if > 1.8.9 {
 import com.google.gson.JsonElement;
-import com.mojang.logging.LogUtils;
 import com.mojang.serialization.DynamicOps;
 import com.mojang.serialization.JsonOps;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
+import net.minecraft.resources.RegistryOps;
+import net.minecraft.world.level.storage.LevelResource;
+//?} else {
+/*import net.minecraft.text.LiteralText;
+import org.polyfrost.oneconfig.api.event.v1.EventManager;
+import org.polyfrost.oneconfig.api.event.v1.events.ServerJoinEvent;
+import org.polyfrost.oneconfig.api.event.v1.events.ShutdownEvent;
+import org.polyfrost.oneconfig.api.event.v1.events.TickEvent;
+*///?}
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientPacketListener;
@@ -15,13 +24,12 @@ import net.minecraft.client.server.IntegratedServer;
 import net.minecraft.network.Connection;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
-import net.minecraft.resources.RegistryOps;
-import net.minecraft.world.level.storage.LevelResource;
 import org.jetbrains.annotations.Nullable;
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.util.ChatCompat;
 import org.polyfrost.chattweaks.util.ChatHistoryAccess;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.ref.WeakReference;
 import java.nio.file.Path;
@@ -38,7 +46,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public final class ChatHistory {
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChatHistory.class);
     private static final DateTimeFormatter MARKER_TIME =
             DateTimeFormatter.ofLocalizedDateTime(FormatStyle.MEDIUM, FormatStyle.SHORT);
     private static final int MARKER_RULE_LENGTH = 12;
@@ -61,17 +69,25 @@ public final class ChatHistory {
     private static String activeKey;
     @Nullable
     private static Path activeFile;
+    //? if > 1.8.9 {
     @Nullable
     private static DynamicOps<JsonElement> activeOps;
+    //?}
     private static long lastSave;
 
     private ChatHistory() {
     }
 
     public static void init() {
+        //? if > 1.8.9 {
         ClientPlayConnectionEvents.JOIN.register((handler, sender, client) -> onJoin(handler, client));
         ClientTickEvents.END_CLIENT_TICK.register(ChatHistory::onTick);
         ClientLifecycleEvents.CLIENT_STOPPING.register(client -> onStopping());
+        //?} else {
+        /*EventManager.register(ServerJoinEvent.class, () -> onJoin(Minecraft.getInstance().getConnection(), Minecraft.getInstance()));
+        EventManager.register(TickEvent.End.class, () -> onTick(Minecraft.getInstance()));
+        EventManager.register(ShutdownEvent.class, ChatHistory::onStopping);
+        *///?}
     }
 
     public static void onDisconnected() {
@@ -96,6 +112,7 @@ public final class ChatHistory {
 
         activeKey = key;
         activeFile = ChatHistoryStorage.fileFor(user, key);
+        //? if > 1.8.9
         activeOps = RegistryOps.create(JsonOps.INSTANCE, handler.registryAccess());
         lastSave = System.currentTimeMillis();
 
@@ -113,9 +130,11 @@ public final class ChatHistory {
 
         boolean clear = !chat.chattweaks$isEmpty();
         Path file = activeFile;
+        //? if > 1.8.9
         DynamicOps<JsonElement> ops = activeOps;
         loadedKey = key;
         IO.execute(() -> {
+            //~ if =1.8.9 'read(file, ops)' -> 'read(file)'
             List<ChatHistoryEntry> entries = ChatHistoryStorage.read(file, ops);
             client.execute(() -> {
                 if (!key.equals(activeKey)) {
@@ -160,14 +179,21 @@ public final class ChatHistory {
 
     private static void save() {
         Path file = activeFile;
+        //? if > 1.8.9 {
         DynamicOps<JsonElement> ops = activeOps;
         if (file == null || ops == null) {
             return;
         }
+        //?} else {
+        /*if (file == null) {
+            return;
+        }
+        *///?}
         List<ChatHistoryEntry> entries = ((ChatHistoryAccess) ChatCompat.getChat()).chattweaks$captureHistory();
         WRITING.set(true);
         IO.execute(() -> {
             try {
+                //~ if =1.8.9 'write(file, entries, ops)' -> 'write(file, entries)'
                 ChatHistoryStorage.write(file, entries, ops);
             } catch (Exception e) {
                 LOGGER.error("Failed to write chat history to {}", file, e);
@@ -188,7 +214,10 @@ public final class ChatHistory {
         }
         IntegratedServer singleplayer = client.getSingleplayerServer();
         if (singleplayer != null) {
+            //? if > 1.8.9 {
             Path world = singleplayer.getWorldPath(LevelResource.ROOT).toAbsolutePath().normalize().getFileName();
+            //?} else
+            //Path world = Path.of(singleplayer.getWorldSaveName());
             if (world != null) {
                 return "singleplayer/" + world;
             }
@@ -201,11 +230,18 @@ public final class ChatHistory {
                 .withLocale(Locale.getDefault(Locale.Category.FORMAT))
                 .withZone(ZoneId.systemDefault())
                 .format(Instant.ofEpochSecond(sessionTime));
-        Style rule = Style.EMPTY.withColor(ChatFormatting.DARK_GRAY).withStrikethrough(true);
         String spaces = " ".repeat(MARKER_RULE_LENGTH);
+        //? if > 1.8.9 {
+        Style rule = Style.EMPTY.withColor(ChatFormatting.DARK_GRAY).withStrikethrough(true);
         return Component.empty()
                 .append(Component.literal(spaces).withStyle(rule))
                 .append(Component.literal(" " + stamp + " ").withStyle(ChatFormatting.GRAY))
                 .append(Component.literal(spaces).withStyle(rule));
+        //?} else {
+        /*return new LiteralText("")
+                .append(new LiteralText(spaces).setStyle(new Style().setColor(ChatFormatting.DARK_GRAY).setStrikethrough(true)))
+                .append(new LiteralText(" " + stamp + " ").setStyle(new Style().setColor(ChatFormatting.GRAY)))
+                .append(new LiteralText(spaces).setStyle(new Style().setColor(ChatFormatting.DARK_GRAY).setStrikethrough(true)));
+        *///?}
     }
 }

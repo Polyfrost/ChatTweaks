@@ -5,12 +5,17 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
-import com.mojang.logging.LogUtils;
-import com.mojang.serialization.DynamicOps;
 import net.fabricmc.loader.api.FabricLoader;
+//? if > 1.8.9 {
+import com.mojang.serialization.DynamicOps;
 import net.minecraft.network.chat.ComponentSerialization;
+//?} else {
+/*import com.google.gson.JsonParseException;
+import net.minecraft.network.chat.Component;
+*///?}
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -28,7 +33,7 @@ import java.util.UUID;
 import java.util.regex.Pattern;
 
 public final class ChatHistoryStorage {
-    private static final Logger LOGGER = LogUtils.getLogger();
+    private static final Logger LOGGER = LoggerFactory.getLogger(ChatHistoryStorage.class);
     private static final Gson GSON = new Gson();
     private static final int FORMAT = 1;
     private static final int MAX_NAME_LENGTH = 48;
@@ -63,7 +68,10 @@ public final class ChatHistoryStorage {
         return out.toString();
     }
 
+    //? if > 1.8.9 {
     public static List<ChatHistoryEntry> read(Path file, DynamicOps<JsonElement> ops) {
+    //?} else
+    //public static List<ChatHistoryEntry> read(Path file) {
         if (!Files.isRegularFile(file)) {
             return List.of();
         }
@@ -97,9 +105,19 @@ public final class ChatHistoryStorage {
                 if (message == null) {
                     continue;
                 }
+                //? if > 1.8.9 {
                 ComponentSerialization.CODEC.parse(ops, message)
                         .result()
                         .ifPresent(component -> out.add(ChatHistoryEntry.message(component)));
+                //?} else {
+                /*try {
+                    Component component = Component.Serializer.fromJson(message.toString());
+                    if (component != null) {
+                        out.add(ChatHistoryEntry.message(component));
+                    }
+                } catch (JsonParseException ignored) {
+                }
+                *///?}
             }
             return out;
         } catch (Exception e) {
@@ -108,7 +126,10 @@ public final class ChatHistoryStorage {
         }
     }
 
+    //? if > 1.8.9 {
     public static void write(Path file, List<ChatHistoryEntry> entries, DynamicOps<JsonElement> ops) throws IOException {
+    //?} else
+    //public static void write(Path file, List<ChatHistoryEntry> entries) throws IOException {
         Files.createDirectories(file.getParent());
         Path temp = file.resolveSibling(file.getFileName() + ".tmp");
 
@@ -121,9 +142,12 @@ public final class ChatHistoryStorage {
                     writer.beginObject().name("session").value(entry.sessionTime()).endObject();
                     continue;
                 }
+                //? if > 1.8.9 {
                 JsonElement message = ComponentSerialization.CODEC.encodeStart(ops, entry.message())
                         .result()
                         .orElse(null);
+                //?} else
+                //JsonElement message = JsonParser.parseString(Component.Serializer.toJson(entry.message()));
                 if (message == null) {
                     continue;
                 }

@@ -167,8 +167,10 @@ public abstract class ChatHistoryMixin implements ChatHistoryAccess {
     private static GuiMessage chattweaks$line(Component content, int addedTime) {
         //? if >=26.1 {
         return new GuiMessage(addedTime, content, null, GuiMessageSource.SYSTEM_CLIENT, null);
-        //?} else {
+        //?} elif > 1.8.9 {
         /*return new GuiMessage(addedTime, content, null, null);
+        *///?} else {
+        /*return new GuiMessage(addedTime, content, 0);
         *///?}
     }
 }
