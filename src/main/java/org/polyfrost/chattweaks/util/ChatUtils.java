@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class ChatUtils {
+    //~ if =1.8.9 '256' -> '100'
     public static final int VANILLA_CHAT_LIMIT = 256;
 
     public static final int COMMAND_LIMIT = 32500;
@@ -99,6 +100,7 @@ public final class ChatUtils {
     }
 
     private static boolean hasScreenshotMarker(Component component) {
+        //~ if =1.8.9 'component.getContents() instanceof' -> 'component instanceof'
         if (component.getContents() instanceof TranslatableContents translatable
                 && containsIgnoreCase(translatable.getKey(), SCREENSHOT_KEY)) {
             return true;
@@ -267,6 +269,29 @@ public final class ChatUtils {
         return true;
     }
 
+    //? if = 1.8.9 {
+    /*private static final int[] FORMATTING_RGB = {
+            0x000000, 0x0000AA, 0x00AA00, 0x00AAAA, 0xAA0000, 0xAA00AA, 0xFFAA00, 0xAAAAAA,
+            0x555555, 0x5555FF, 0x55FF55, 0x55FFFF, 0xFF5555, 0xFF55FF, 0xFFFF55, 0xFFFFFF
+    };
+
+    public static net.minecraft.ChatFormatting nearestFormatting(int rgb) {
+        int best = 0;
+        long bestDistance = Long.MAX_VALUE;
+        for (int i = 0; i < FORMATTING_RGB.length; i++) {
+            int dr = (rgb >> 16 & 0xFF) - (FORMATTING_RGB[i] >> 16 & 0xFF);
+            int dg = (rgb >> 8 & 0xFF) - (FORMATTING_RGB[i] >> 8 & 0xFF);
+            int db = (rgb & 0xFF) - (FORMATTING_RGB[i] & 0xFF);
+            long distance = (long) dr * dr + (long) dg * dg + (long) db * db;
+            if (distance < bestDistance) {
+                bestDistance = distance;
+                best = i;
+            }
+        }
+        return net.minecraft.ChatFormatting.byId(best);
+    }
+
+    *///?}
     public static String getCurrentTime() {
         String pattern = ChatTweaks.config.timestampsFormat == 1 ? "HH:mm" : "hh:mm a";
         if (ChatTweaks.config.secondsOnTimestamps) {

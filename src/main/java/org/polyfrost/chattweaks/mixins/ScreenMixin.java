@@ -4,6 +4,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.ChatScreen;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.ClickEvent;
+//? if = 1.8.9
+//import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.Style;
 import org.jetbrains.annotations.Nullable;
 import org.polyfrost.chattweaks.ChatTweaks;
@@ -27,13 +29,24 @@ public abstract class ScreenMixin {
             ChatCompat.addRecentChat(ChatCompat.safeClickValue(clickEvent));
         }
     }
-    //?} else {
+    //?} elif > 1.8.9 {
     /*@Inject(method = "handleComponentClicked", at = @At("HEAD"))
     private void chattweaks$safeChatClicksHistory(@Nullable Style style, CallbackInfoReturnable<Boolean> cir) {
         if (!ChatTweaks.config.safeChatClicksHistory || style == null || !((Object) this instanceof ChatScreen)) {
             return;
         }
         ClickEvent clickEvent = style.getClickEvent();
+        if (clickEvent != null && ChatCompat.isRunCommand(clickEvent)) {
+            ChatCompat.addRecentChat(ChatCompat.safeClickValue(clickEvent));
+        }
+    }
+    *///?} else {
+    /*@Inject(method = "handleClickEvent", at = @At("HEAD"))
+    private void chattweaks$safeChatClicksHistory(@Nullable Component component, CallbackInfoReturnable<Boolean> cir) {
+        if (!ChatTweaks.config.safeChatClicksHistory || component == null || !((Object) this instanceof ChatScreen)) {
+            return;
+        }
+        ClickEvent clickEvent = component.getStyle().getClickEvent();
         if (clickEvent != null && ChatCompat.isRunCommand(clickEvent)) {
             ChatCompat.addRecentChat(ChatCompat.safeClickValue(clickEvent));
         }

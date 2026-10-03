@@ -200,12 +200,14 @@ public class ChatTweaksConfig extends Config {
     )
     public boolean bypassCommandLimit = true;
 
+    //? if > 1.8.9 {
     @Switch(
             title = "Fuzzy Autocomplete",
             description = "Suggest commands that contain what you typed instead of only the ones starting with it.",
             subcategory = "Commands"
     )
     public boolean fuzzyAutocomplete = false;
+    //?}
 
     @Switch(
             title = "Safe Chat Clicks",

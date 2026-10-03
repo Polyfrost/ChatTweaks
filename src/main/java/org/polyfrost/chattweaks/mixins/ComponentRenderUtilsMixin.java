@@ -1,5 +1,6 @@
 package org.polyfrost.chattweaks.mixins;
 
+//? if > 1.8.9 {
 import net.minecraft.ChatFormatting;
 import net.minecraft.client.ComponentCollector;
 import net.minecraft.client.Minecraft;
@@ -59,3 +60,32 @@ public class ComponentRenderUtilsMixin {
         return collector.getResultOrEmpty();
     }
 }
+//?} else {
+/*import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.components.ComponentRenderUtils;
+import net.minecraft.network.chat.Component;
+import org.polyfrost.chattweaks.util.MessageMeta;
+import org.polyfrost.chattweaks.util.Spacing;
+import org.spongepowered.asm.mixin.Mixin;
+
+import java.util.List;
+
+@Mixin(ComponentRenderUtils.class)
+public class ComponentRenderUtilsMixin {
+    @WrapMethod(method = "wrapText")
+    private static List<Component> chattweaks$indentWrappedLines(Component message, int maxWidth, Font font, boolean keepFormatting, boolean forceColor, Operation<List<Component>> original) {
+        int stampWidth = message instanceof MessageMeta meta ? meta.chattweaks$getStampWidth() : 0;
+        if (stampWidth <= 0 || stampWidth >= maxWidth) {
+            return original.call(message, maxWidth, font, keepFormatting, forceColor);
+        }
+
+        List<Component> lines = original.call(message, maxWidth - stampWidth, font, keepFormatting, forceColor);
+        for (int i = 1; i < lines.size(); i++) {
+            lines.set(i, Spacing.of(stampWidth).append(lines.get(i)));
+        }
+        return lines;
+    }
+}
+*///?}

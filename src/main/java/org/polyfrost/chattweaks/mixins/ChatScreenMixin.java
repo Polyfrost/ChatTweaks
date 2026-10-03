@@ -29,15 +29,21 @@ public abstract class ChatScreenMixin implements ChatInputAccess {
     @Shadow
     protected EditBox input;
 
+    //? if > 1.8.9 {
     @Shadow
     public abstract void handleChatInput(String msg, boolean addToRecent);
+    //?}
 
     @Override
     public EditBox chattweaks$getInput() {
         return this.input;
     }
 
-    //? if <26.1 {
+    //? if = 1.8.9 {
+    /*@Inject(method = "render", at = @At("TAIL"))
+    private void chattweaks$renderImagePreview(int mouseX, int mouseY, float delta, CallbackInfo ci) {
+        GuiGraphics graphics = new GuiGraphics();
+    *///?} elif <26.1 {
     /*@Inject(method = "render", at = @At("TAIL"))
     private void chattweaks$renderImagePreview(GuiGraphics graphics, int mouseX, int mouseY, float delta, CallbackInfo ci) {
     *///?} else {
@@ -47,6 +53,7 @@ public abstract class ChatScreenMixin implements ChatInputAccess {
         ImagePreview.render(graphics, mouseX, mouseY);
     }
 
+    //? if > 1.8.9 {
     @Inject(method = "normalizeChatMessage", at = @At("HEAD"), cancellable = true)
     private void chattweaks$keepLongCommands(String message, CallbackInfoReturnable<String> cir) {
         if (!ChatTweaks.config.bypassCommandLimit) {
@@ -57,8 +64,21 @@ public abstract class ChatScreenMixin implements ChatInputAccess {
             cir.setReturnValue(normalized);
         }
     }
+    //?}
 
-    //? if >=1.21.10 {
+    //? if = 1.8.9 {
+    /*@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
+    private void chattweaks$shiftChat(char chr, int keyCode, CallbackInfo ci) {
+        if (ChatTweaks.config.shiftChat && Screen.hasShiftDown() && (keyCode == 28 || keyCode == 156)) {
+            String message = input.getValue().trim();
+            if (!message.isEmpty()) {
+                ((Screen) (Object) this).sendChatMessage(message);
+            }
+            input.setValue("");
+            ci.cancel();
+        }
+    }
+    *///?} elif >=1.21.10 {
     @Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
     private void chattweaks$shiftChat(KeyEvent event, CallbackInfoReturnable<Boolean> cir) {
         boolean shiftDown = event.hasShiftDown();
@@ -69,6 +89,7 @@ public abstract class ChatScreenMixin implements ChatInputAccess {
         boolean shiftDown = Screen.hasShiftDown();
         boolean enter = keyCode == 257 || keyCode == 335;
     *///?}
+    //? if > 1.8.9 {
 
         if (ChatTweaks.config.shiftChat && shiftDown && enter) {
             handleChatInput(input.getValue(), true);
@@ -76,4 +97,5 @@ public abstract class ChatScreenMixin implements ChatInputAccess {
             cir.setReturnValue(true);
         }
     }
+    //?}
 }

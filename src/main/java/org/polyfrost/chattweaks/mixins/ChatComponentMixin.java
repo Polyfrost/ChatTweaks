@@ -5,10 +5,17 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ChatComponent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.MessageSignature;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.Style;
+//? if > 1.8.9 {
+import net.minecraft.network.chat.MessageSignature;
 import net.minecraft.network.chat.TextColor;
+//?} else {
+/*import com.llamalad7.mixinextras.sugar.Local;
+import net.minecraft.text.LiteralText;
+import org.polyfrost.chattweaks.util.ChatLineParent;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
+*///?}
 import org.jetbrains.annotations.Nullable;
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.features.CompactChat;
@@ -26,9 +33,11 @@ import java.util.List;
 //? if >=26.1 {
 import net.minecraft.client.multiplayer.chat.GuiMessage;
 import net.minecraft.client.multiplayer.chat.GuiMessageTag;
-//?} else {
+//?} elif > 1.8.9 {
 /*import net.minecraft.client.GuiMessage;
 import net.minecraft.client.GuiMessageTag;
+*///?} else {
+/*import net.minecraft.client.GuiMessage;
 *///?}
 
 @Mixin(ChatComponent.class)
@@ -55,6 +64,7 @@ public abstract class ChatComponentMixin {
 
     @Shadow
     @Final
+    //~ if =1.8.9 'GuiMessage.Line' -> 'GuiMessage'
     private List<GuiMessage.Line> trimmedMessages;
 
     @Shadow
@@ -77,7 +87,7 @@ public abstract class ChatComponentMixin {
         CompactChat.settle(this.allMessages);
     }
 
-    //?} else {
+    //?} elif > 1.8.9 {
     /*@Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;Lnet/minecraft/network/chat/MessageSignature;Lnet/minecraft/client/GuiMessageTag;)V", at = @At("HEAD"), cancellable = true)
     private void chattweaks$onAddMessage(Component component, MessageSignature signature, GuiMessageTag tag, CallbackInfo ci) {
         chattweaks$dropBlank(component, ci);
@@ -92,9 +102,33 @@ public abstract class ChatComponentMixin {
     private void chattweaks$afterAddMessage(Component component, MessageSignature signature, GuiMessageTag tag, CallbackInfo ci) {
         CompactChat.settle(this.allMessages);
     }
+    *///?} else {
+    /*@Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;I)V", at = @At("HEAD"), cancellable = true)
+    private void chattweaks$onAddMessage(Component component, int id, CallbackInfo ci) {
+        chattweaks$dropBlank(component, ci);
+    }
+
+    @ModifyVariable(method = "addMessage(Lnet/minecraft/network/chat/Component;I)V", at = @At("HEAD"), argsOnly = true)
+    private Component chattweaks$decorateMessage(Component component) {
+        return chattweaks$decorate(component);
+    }
+
+    @Inject(method = "addMessage(Lnet/minecraft/network/chat/Component;I)V", at = @At("RETURN"))
+    private void chattweaks$afterAddMessage(Component component, int id, CallbackInfo ci) {
+        CompactChat.settle(this.allMessages);
+    }
+
+    @ModifyArg(method = "addMessage(Lnet/minecraft/network/chat/Component;IIZ)V", at = @At(value = "INVOKE", target = "Ljava/util/List;add(ILjava/lang/Object;)V", ordinal = 0, remap = false), index = 1)
+    private Object chattweaks$rememberParent(Object line, @Local(argsOnly = true) Component message) {
+        ((ChatLineParent) line).chattweaks$setParent(message);
+        return line;
+    }
     *///?}
 
+    //? if > 1.8.9 {
     @ModifyExpressionValue(method = {"addMessageToDisplayQueue", "addMessageToQueue"}, at = @At(value = "CONSTANT", args = "intValue=100"), require = 2, allow = 2)
+    //?} else
+    //@ModifyExpressionValue(method = "addMessage(Lnet/minecraft/network/chat/Component;IIZ)V", at = @At(value = "CONSTANT", args = "intValue=100"), require = 2, allow = 2)
     private int chattweaks$increaseChatHistoryLimit(int original) {
         return ChatTweaks.config.increaseChatHistoryLimit;
     }
@@ -108,8 +142,9 @@ public abstract class ChatComponentMixin {
         int from = -1;
         int to = -1;
 
-        //? if >=26.1 {
+        //? if >=26.1 || =1.8.9 {
         for (int i = 0; i < trimmedMessages.size(); i++) {
+            //~ if =1.8.9 'trimmedMessages.get(i).parent() == message' -> '((ChatLineParent) trimmedMessages.get(i)).chattweaks$getParent() == message.content()'
             if (trimmedMessages.get(i).parent() == message) {
                 if (from < 0) {
                     from = i;
@@ -201,6 +236,7 @@ public abstract class ChatComponentMixin {
             if (ChatTweaks.config.onlyNewTimestamps) {
                 if (stamp.equals(chattweaks$lastStamp)) {
                     chattweaks$stampWidth = chattweaks$measure(stamp);
+                    //~ if =1.8.9 'Component.empty()' -> 'new LiteralText("")'
                     return Component.empty()
                             .append(Spacing.of(chattweaks$stampWidth))
                             .append(component);
@@ -208,11 +244,18 @@ public abstract class ChatComponentMixin {
                 chattweaks$lastStamp = stamp;
             }
             chattweaks$stampWidth = chattweaks$measure(stamp);
+            //? if > 1.8.9 {
             return Component.empty()
                     .append(Component.literal(stamp).withStyle(chattweaks$timestampStyle()))
                     .append(component);
+            //?} else {
+            /*return new LiteralText("")
+                    .append(new LiteralText(stamp).setStyle(chattweaks$timestampStyle()))
+                    .append(component);
+            *///?}
         }
 
+        //? if > 1.8.9 {
         MutableComponent copy = component.copy();
         Style style = copy.getStyle();
         MutableComponent hoverText = Component.literal("Sent at " + time).withStyle(chattweaks$timestampStyle());
@@ -221,6 +264,16 @@ public abstract class ChatComponentMixin {
             hoverText = existing.copy().append("\n").append(hoverText);
         }
         return copy.setStyle(style.withHoverEvent(ChatCompat.showText(hoverText)));
+        //?} else {
+        /*Component copy = component.copy();
+        Component hoverText = new LiteralText("Sent at " + time).setStyle(chattweaks$timestampStyle());
+        Component existing = ChatCompat.showTextValue(copy.getStyle().getHoverEvent());
+        if (existing != null) {
+            hoverText = existing.copy().append("\n").append(hoverText);
+        }
+        copy.getStyle().setHoverEvent(ChatCompat.showText(hoverText));
+        return copy;
+        *///?}
     }
 
     @Unique
@@ -235,11 +288,15 @@ public abstract class ChatComponentMixin {
     @Unique
     private static Style chattweaks$timestampStyle() {
         int rgb = ChatTweaks.config.timestampsColor.getRGB() & 0xFFFFFF;
+        //? if > 1.8.9 {
         if (rgb != chattweaks$styleRgb || chattweaks$style == null) {
             chattweaks$styleRgb = rgb;
             chattweaks$style = Style.EMPTY.withColor(TextColor.fromRgb(rgb));
         }
         return chattweaks$style;
+        //?} else {
+        /*return new Style().setColor(ChatUtils.nearestFormatting(rgb));
+        *///?}
     }
 
     @Unique
@@ -269,8 +326,13 @@ public abstract class ChatComponentMixin {
         chattweaks$untrim(found, dropped);
 
         int rgb = ChatTweaks.config.compactChatColor.getRGB() & 0xFFFFFF;
+        //? if > 1.8.9 {
         Component stacked = component.copy().append(Component.literal(ChatUtils.formatCount(count))
                 .withStyle(Style.EMPTY.withColor(TextColor.fromRgb(rgb))));
+        //?} else {
+        /*Component stacked = component.copy().append(new LiteralText(ChatUtils.formatCount(count))
+                .setStyle(new Style().setColor(ChatUtils.nearestFormatting(rgb))));
+        *///?}
         CompactChat.expect(key, stacked);
         return stacked;
     }

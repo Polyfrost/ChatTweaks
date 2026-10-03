@@ -1,6 +1,11 @@
 package org.polyfrost.chattweaks.test;
 
+//? if > 1.8.9 {
 import net.minecraft.SharedConstants;
+//?} else {
+/*import net.fabricmc.loader.api.FabricLoader;
+import net.ornithemc.osl.entrypoints.api.ModInitializer;
+*///?}
 import net.minecraft.server.Bootstrap;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -18,7 +23,11 @@ public class MixinTest {
 
     @BeforeAll
     public static void setupEnvironment() {
+        //? if > 1.8.9 {
         SharedConstants.tryDetectVersion();
+        //?} else {
+        /*FabricLoader.getInstance().invokeEntrypoints(ModInitializer.ENTRYPOINT_KEY, ModInitializer.class, ModInitializer::init);
+        *///?}
         Bootstrap.bootStrap();
     }
 

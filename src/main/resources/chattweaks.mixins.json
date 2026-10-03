@@ -11,10 +11,15 @@
     "ChatComponentMixin",
     "ChatHistoryMixin",
     "ChatHoverMixin",
+    //? if = 1.8.9
+    //"ChatMessageC2SPacketMixin",
     "ChatScreenMixin",
     "ComponentRenderUtilsMixin",
     "EditBoxMixin",
+    //? if = 1.8.9
+    //"GuiMessageMixin",
     "GuiMixin",
+    //? if > 1.8.9
     "LiteralCommandNodeMixin",
     "MutableComponentMixin",
     "ScreenMixin",

@@ -6,6 +6,12 @@ import net.minecraft.client.multiplayer.chat.GuiMessage;
 /*import net.minecraft.client.GuiMessage;
 *///?}
 import net.minecraft.client.gui.components.ChatComponent;
+//? if = 1.8.9 {
+/*import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
+import net.minecraft.util.Mth;
+import org.polyfrost.chattweaks.util.ChatLineParent;
+*///?}
 import org.jetbrains.annotations.Nullable;
 import org.polyfrost.chattweaks.util.HoveredUrl;
 import org.polyfrost.chattweaks.util.Spacing;
@@ -39,7 +45,47 @@ public abstract class ChatHoverMixin implements HoveredUrl {
         return matcher.find() ? matcher.group() : null;
     }
 
-    //? if <1.21.11 {
+    //? if = 1.8.9 {
+    /*@Shadow
+    @Final
+    private List<GuiMessage> trimmedMessages;
+
+    @Shadow
+    private int chatScrollbarPos;
+
+    @Shadow
+    public abstract float getScale();
+
+    @Shadow
+    public abstract int getWidth();
+
+    @Shadow
+    public abstract int getLinesPerPage();
+
+    @Shadow
+    public abstract boolean isChatFocused();
+
+    @Unique
+    private int chattweaks$getMessageLineIndexAt(double mouseX, double mouseY) {
+        if (!this.isChatFocused()) {
+            return -1;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        float scale = this.getScale();
+        int x = Mth.floor((float) (mouseX - 3) / scale);
+        int y = Mth.floor((float) (mc.getWindow().getGuiScaledHeight() - mouseY - 27) / scale);
+        if (x < 0 || y < 0 || x > Mth.floor(this.getWidth() / scale)) {
+            return -1;
+        }
+        int lines = Math.min(this.getLinesPerPage(), this.trimmedMessages.size());
+        int lineHeight = mc.font.lineHeight;
+        if (y >= lineHeight * lines + lines) {
+            return -1;
+        }
+        int index = y / lineHeight + this.chatScrollbarPos;
+        return index < this.trimmedMessages.size() ? index : -1;
+    }
+    *///?} elif <1.21.11 {
     /*@Shadow
     @Final
     private List<GuiMessage.Line> trimmedMessages;
@@ -190,6 +236,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
     private List<GuiMessage> allMessages;
 
     @Unique
+    //~ if =1.8.9 'GuiMessage.Line' -> 'GuiMessage'
     private GuiMessage.Line chattweaks$cachedLine;
 
     @Unique
@@ -200,7 +247,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
     private String chattweaks$message(int index) {
         //? if >=26.1 {
         GuiMessage message = trimmedMessages.get(index).parent();
-        //?} else {
+        //?} elif > 1.8.9 {
         /*int run = -1;
         for (int i = 0; i <= index; i++) {
             if (trimmedMessages.get(i).endOfEntry()) {
@@ -211,14 +258,20 @@ public abstract class ChatHoverMixin implements HoveredUrl {
             return null;
         }
         GuiMessage message = allMessages.get(run);
+        *///?} else {
+        /*Component content = ((ChatLineParent) trimmedMessages.get(index)).chattweaks$getParent();
+        return content == null ? null : Spacing.strip(content.getString());
         *///?}
+        //? if > 1.8.9
         return message == null ? null : Spacing.strip(message.content().getString());
     }
 
     @Override
     @Nullable
     public String chattweaks$hoveredUrl(double mouseX, double mouseY) {
-        //? if <1.21.11 {
+        //? if = 1.8.9 {
+        /*int index = chattweaks$getMessageLineIndexAt(mouseX, mouseY);
+        *///?} elif <1.21.11 {
         /*double chatX = screenToChatX(mouseX);
         double chatY = screenToChatY(mouseY);
         int index = getMessageLineIndexAt(chatX, chatY);
@@ -231,6 +284,7 @@ public abstract class ChatHoverMixin implements HoveredUrl {
             return null;
         }
 
+        //~ if =1.8.9 'GuiMessage.Line' -> 'GuiMessage'
         GuiMessage.Line line = trimmedMessages.get(index);
         if (line != chattweaks$cachedLine) {
             chattweaks$cachedLine = line;
