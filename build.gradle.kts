@@ -1,5 +1,6 @@
-import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import net.ornithemc.ploceus.api.PloceusGradleExtensionApi
+import org.gradle.api.tasks.testing.logging.TestExceptionFormat
+import org.gradle.internal.os.OperatingSystem
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -79,8 +80,8 @@ repositories {
 
 dependencies {
     minecraft("com.mojang:minecraft:$mcDependencyVersion")
-    if (isOrnithe) {
-        mappings(ploceus!!.layeredMappings {
+    if (ploceus != null) {
+        mappings(ploceus.layeredMappings {
             mappings("net.ornithemc:feather-gen2:$mcversion+build.${sc.properties.get<String>("deps.feather_build")}:v2") {
                 containsUnpick()
             }
@@ -117,7 +118,7 @@ loom {
         generateRunConfig = true
         runDirectory = rootProject.file("run")
         jvmArguments.add("-Dmixin.debug.export=true")
-        if (isOrnithe && org.gradle.internal.os.OperatingSystem.current().isMacOsX) {
+        if (isOrnithe && OperatingSystem.current().isMacOsX) {
             jvmArguments.add("-XstartOnFirstThread")
         }
     }
