@@ -1,5 +1,7 @@
 package org.polyfrost.chattweaks.util;
 
+//? if = 1.8.9
+//import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.HoverEvent;
@@ -275,7 +277,7 @@ public final class ChatUtils {
             0x555555, 0x5555FF, 0x55FF55, 0x55FFFF, 0xFF5555, 0xFF55FF, 0xFFFF55, 0xFFFFFF
     };
 
-    public static net.minecraft.ChatFormatting nearestFormatting(int rgb) {
+    public static ChatFormatting nearestFormatting(int rgb) {
         int best = 0;
         long bestDistance = Long.MAX_VALUE;
         for (int i = 0; i < FORMATTING_RGB.length; i++) {
@@ -288,7 +290,7 @@ public final class ChatUtils {
                 best = i;
             }
         }
-        return net.minecraft.ChatFormatting.byId(best);
+        return ChatFormatting.byId(best);
     }
 
     *///?}
