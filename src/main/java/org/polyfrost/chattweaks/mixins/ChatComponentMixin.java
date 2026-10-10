@@ -130,7 +130,7 @@ public abstract class ChatComponentMixin {
     //?} else
     //@ModifyExpressionValue(method = "addMessage(Lnet/minecraft/network/chat/Component;IIZ)V", at = @At(value = "CONSTANT", args = "intValue=100"), require = 2, allow = 2)
     private int chattweaks$increaseChatHistoryLimit(int original) {
-        return ChatTweaks.config.increaseChatHistoryLimit;
+        return ChatTweaks.config.modEnabled ? ChatTweaks.config.increaseChatHistoryLimit : original;
     }
 
     @Unique
@@ -186,7 +186,7 @@ public abstract class ChatComponentMixin {
 
     @Unique
     private void chattweaks$dropBlank(Component component, CallbackInfo ci) {
-        if (!ChatTweaks.config.removeBlankMessages) {
+        if (!ChatTweaks.config.modEnabled || !ChatTweaks.config.removeBlankMessages) {
             return;
         }
         if (ChatUtils.isBlank(component.getString())) {
@@ -196,6 +196,9 @@ public abstract class ChatComponentMixin {
 
     @Unique
     private Component chattweaks$decorate(Component component) {
+        if (!ChatTweaks.config.modEnabled) {
+            return component;
+        }
         chattweaks$stampWidth = 0;
         String raw = component.getString();
         String key = chattweaks$compactKey(component, raw);

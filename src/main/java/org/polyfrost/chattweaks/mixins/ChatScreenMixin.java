@@ -56,7 +56,7 @@ public abstract class ChatScreenMixin implements ChatInputAccess {
     //? if > 1.8.9 {
     @Inject(method = "normalizeChatMessage", at = @At("HEAD"), cancellable = true)
     private void chattweaks$keepLongCommands(String message, CallbackInfoReturnable<String> cir) {
-        if (!ChatTweaks.config.bypassCommandLimit) {
+        if (!ChatTweaks.config.modEnabled || !ChatTweaks.config.bypassCommandLimit) {
             return;
         }
         String normalized = ChatUtils.normalizeUntrimmed(message);
@@ -69,7 +69,7 @@ public abstract class ChatScreenMixin implements ChatInputAccess {
     //? if = 1.8.9 {
     /*@Inject(method = "keyPressed", at = @At("HEAD"), cancellable = true)
     private void chattweaks$shiftChat(char chr, int keyCode, CallbackInfo ci) {
-        if (ChatTweaks.config.shiftChat && Screen.hasShiftDown() && (keyCode == 28 || keyCode == 156)) {
+        if (ChatTweaks.config.modEnabled && ChatTweaks.config.shiftChat && Screen.hasShiftDown() && (keyCode == 28 || keyCode == 156)) {
             String message = input.getValue().trim();
             if (!message.isEmpty()) {
                 ((Screen) (Object) this).sendChatMessage(message);
@@ -91,7 +91,7 @@ public abstract class ChatScreenMixin implements ChatInputAccess {
     *///?}
     //? if > 1.8.9 {
 
-        if (ChatTweaks.config.shiftChat && shiftDown && enter) {
+        if (ChatTweaks.config.modEnabled && ChatTweaks.config.shiftChat && shiftDown && enter) {
             handleChatInput(input.getValue(), true);
             input.setValue("");
             cir.setReturnValue(true);

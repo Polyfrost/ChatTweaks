@@ -103,7 +103,7 @@ public final class ChatHistory {
         boolean reconnected = lastConnection == null || lastConnection.get() != connection;
         lastConnection = new WeakReference<>(connection);
 
-        String key = ChatTweaks.config.saveChatHistory ? serverKey(client) : null;
+        String key = ChatTweaks.config.modEnabled && ChatTweaks.config.saveChatHistory ? serverKey(client) : null;
         UUID user = client.getUser().getProfileId();
         if (key == null || user == null) {
             activeKey = null;
@@ -149,7 +149,7 @@ public final class ChatHistory {
         if (activeKey == null) {
             return;
         }
-        if (!ChatTweaks.config.saveChatHistory) {
+        if (!ChatTweaks.config.modEnabled || !ChatTweaks.config.saveChatHistory) {
             activeKey = null;
             return;
         }

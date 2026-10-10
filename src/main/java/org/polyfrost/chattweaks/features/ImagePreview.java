@@ -97,7 +97,7 @@ public final class ImagePreview {
     *///?} else {
     public static void render(GuiGraphicsExtractor graphics, int mouseX, int mouseY) {
     //?}
-        if (!ChatTweaks.config.imagePreview) {
+        if (!ChatTweaks.config.modEnabled || !ChatTweaks.config.imagePreview) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();

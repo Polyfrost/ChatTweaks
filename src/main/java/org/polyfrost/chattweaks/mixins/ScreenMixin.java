@@ -22,7 +22,7 @@ public abstract class ScreenMixin {
     //? if >=1.21.11 {
     @Inject(method = "defaultHandleGameClickEvent", at = @At("HEAD"))
     private static void chattweaks$safeChatClicksHistory(ClickEvent clickEvent, Minecraft minecraft, Screen screen, CallbackInfo ci) {
-        if (!ChatTweaks.config.safeChatClicksHistory || !(screen instanceof ChatScreen) || clickEvent == null) {
+        if (!ChatTweaks.config.modEnabled || !ChatTweaks.config.safeChatClicksHistory || !(screen instanceof ChatScreen) || clickEvent == null) {
             return;
         }
         if (ChatCompat.isRunCommand(clickEvent)) {
@@ -32,7 +32,7 @@ public abstract class ScreenMixin {
     //?} elif > 1.8.9 {
     /*@Inject(method = "handleComponentClicked", at = @At("HEAD"))
     private void chattweaks$safeChatClicksHistory(@Nullable Style style, CallbackInfoReturnable<Boolean> cir) {
-        if (!ChatTweaks.config.safeChatClicksHistory || style == null || !((Object) this instanceof ChatScreen)) {
+        if (!ChatTweaks.config.modEnabled || !ChatTweaks.config.safeChatClicksHistory || style == null || !((Object) this instanceof ChatScreen)) {
             return;
         }
         ClickEvent clickEvent = style.getClickEvent();
@@ -43,7 +43,7 @@ public abstract class ScreenMixin {
     *///?} else {
     /*@Inject(method = "handleClickEvent", at = @At("HEAD"))
     private void chattweaks$safeChatClicksHistory(@Nullable Component component, CallbackInfoReturnable<Boolean> cir) {
-        if (!ChatTweaks.config.safeChatClicksHistory || component == null || !((Object) this instanceof ChatScreen)) {
+        if (!ChatTweaks.config.modEnabled || !ChatTweaks.config.safeChatClicksHistory || component == null || !((Object) this instanceof ChatScreen)) {
             return;
         }
         ClickEvent clickEvent = component.getStyle().getClickEvent();

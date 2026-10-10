@@ -2,6 +2,7 @@ package org.polyfrost.chattweaks.config;
 
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.oneconfig.api.config.v1.Config;
+import org.polyfrost.oneconfig.api.config.v1.Property;
 import org.polyfrost.oneconfig.api.config.v1.annotations.Color;
 import org.polyfrost.oneconfig.api.config.v1.annotations.Dropdown;
 import org.polyfrost.oneconfig.api.config.v1.annotations.Slider;
@@ -18,12 +19,24 @@ public class ChatTweaksConfig extends Config {
     @Override
     protected void initialize(boolean byConfigManager) {
         super.initialize(byConfigManager);
-        if (tree != null) VanillaChatOptions.attach(tree);
+        if (tree != null) {
+            Property<Boolean> toggle = Property.recast(getProperty("modEnabled"));
+            tree.onAllProps((id, option) -> {
+                if (option != toggle) option.addDisplayCondition(toggle, false);
+            });
+            VanillaChatOptions.attach(tree);
+        }
         hideIf("timestampsLeftBracket", () -> timestampsBrackets != 5);
         hideIf("timestampsRightBracket", () -> timestampsBrackets != 5);
         hideIf("saveChatHistoryInterval", () -> !saveChatHistory);
         hideIf("sessionMarkers", () -> !saveChatHistory);
     }
+
+    @Switch(
+            title = "Global Mod Toggle",
+            description = "Toggle all mod features on or off."
+    )
+    public boolean modEnabled = true;
 
     @Switch(
             title = "Remove Blank Messages",

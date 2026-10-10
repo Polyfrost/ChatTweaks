@@ -35,7 +35,7 @@ public abstract class EditBoxMixin {
 
     @Unique
     private void chattweaks$updateChatLimit(boolean command) {
-        if (ChatTweaks.config == null || !ChatTweaks.config.bypassCommandLimit) {
+        if (ChatTweaks.config == null || !ChatTweaks.config.modEnabled || !ChatTweaks.config.bypassCommandLimit) {
             return;
         }
         if (!(ChatCompat.getScreen() instanceof ChatScreen screen)) {

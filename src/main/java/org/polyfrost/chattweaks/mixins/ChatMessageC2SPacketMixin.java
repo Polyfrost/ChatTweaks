@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.injection.At;
 public class ChatMessageC2SPacketMixin {
     @ModifyExpressionValue(method = "<init>(Ljava/lang/String;)V", at = @At(value = "CONSTANT", args = "intValue=100"))
     private int chattweaks$keepLongCommands(int original, @Local(argsOnly = true) String message) {
-        if (ChatTweaks.config == null || !ChatTweaks.config.bypassCommandLimit || !ChatUtils.isCommand(message)) {
+        if (ChatTweaks.config == null || !ChatTweaks.config.modEnabled || !ChatTweaks.config.bypassCommandLimit || !ChatUtils.isCommand(message)) {
             return original;
         }
         return ChatUtils.COMMAND_LIMIT;

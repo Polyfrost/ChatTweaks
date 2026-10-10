@@ -28,7 +28,7 @@ public class GuiMixin {
 
     @WrapWithCondition(method = "onDisconnected", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;clearMessages(Z)V"))
     private boolean chattweaks$clearChatHistory(ChatComponent instance, boolean bl) {
-        return !ChatTweaks.config.dontClearChatHistory;
+        return !ChatTweaks.config.modEnabled || !ChatTweaks.config.dontClearChatHistory;
     }
 }
 //?} else {
@@ -54,7 +54,7 @@ public class GuiMixin {
 
     @WrapWithCondition(method = "openScreen", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/components/ChatComponent;clear()V"))
     private boolean chattweaks$clearChatHistory(ChatComponent instance) {
-        return !ChatTweaks.config.dontClearChatHistory;
+        return !ChatTweaks.config.modEnabled || !ChatTweaks.config.dontClearChatHistory;
     }
 }
 *///?}

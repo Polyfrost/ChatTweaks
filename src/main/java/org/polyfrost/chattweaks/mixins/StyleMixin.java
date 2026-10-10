@@ -27,7 +27,7 @@ public abstract class StyleMixin {
 
     @Inject(method = "getHoverEvent", at = @At("RETURN"), cancellable = true)
     private void chattweaks$safeChatClicks(CallbackInfoReturnable<HoverEvent> cir) {
-        if (!ChatTweaks.config.safeChatClicks) {
+        if (!ChatTweaks.config.modEnabled || !ChatTweaks.config.safeChatClicks) {
             return;
         }
         ClickEvent event = this.clickEvent;

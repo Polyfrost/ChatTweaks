@@ -10,6 +10,7 @@ import net.minecraft.locale.Language;
 import net.minecraft.network.chat.FormattedText;
 import net.minecraft.network.chat.Style;
 import net.minecraft.util.FormattedCharSequence;
+import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.util.MessageMeta;
 import org.polyfrost.chattweaks.util.Spacing;
 import org.spongepowered.asm.mixin.Mixin;
@@ -30,7 +31,7 @@ public class ComponentRenderUtilsMixin {
             return;
         }
         int stampWidth = meta.chattweaks$getStampWidth();
-        if (stampWidth <= 0) {
+        if (stampWidth <= 0 || !ChatTweaks.config.modEnabled) {
             return;
         }
         if (stampWidth >= maxWidth) {
@@ -66,6 +67,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.components.ComponentRenderUtils;
 import net.minecraft.network.chat.Component;
+import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.util.MessageMeta;
 import org.polyfrost.chattweaks.util.Spacing;
 import org.spongepowered.asm.mixin.Mixin;
@@ -77,7 +79,7 @@ public class ComponentRenderUtilsMixin {
     @WrapMethod(method = "wrapText")
     private static List<Component> chattweaks$indentWrappedLines(Component message, int maxWidth, Font font, boolean keepFormatting, boolean forceColor, Operation<List<Component>> original) {
         int stampWidth = message instanceof MessageMeta meta ? meta.chattweaks$getStampWidth() : 0;
-        if (stampWidth <= 0 || stampWidth >= maxWidth) {
+        if (stampWidth <= 0 || stampWidth >= maxWidth || !ChatTweaks.config.modEnabled) {
             return original.call(message, maxWidth, font, keepFormatting, forceColor);
         }
 
