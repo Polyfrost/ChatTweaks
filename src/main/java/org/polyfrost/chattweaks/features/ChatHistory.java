@@ -68,6 +68,8 @@ public final class ChatHistory {
     @Nullable
     private static String activeKey;
     @Nullable
+    private static String pausedKey;
+    @Nullable
     private static Path activeFile;
     //? if > 1.8.9 {
     @Nullable
@@ -91,6 +93,7 @@ public final class ChatHistory {
     }
 
     public static void onDisconnected() {
+        pausedKey = null;
         if (activeKey == null) {
             return;
         }
@@ -102,6 +105,7 @@ public final class ChatHistory {
         Connection connection = handler.getConnection();
         boolean reconnected = lastConnection == null || lastConnection.get() != connection;
         lastConnection = new WeakReference<>(connection);
+        pausedKey = null;
 
         String key = ChatTweaks.config.modEnabled && ChatTweaks.config.saveChatHistory ? serverKey(client) : null;
         UUID user = client.getUser().getProfileId();
@@ -146,10 +150,18 @@ public final class ChatHistory {
     }
 
     private static void onTick(Minecraft client) {
+        boolean saving = ChatTweaks.config.modEnabled && ChatTweaks.config.saveChatHistory;
         if (activeKey == null) {
-            return;
+            if (pausedKey == null || !saving) {
+                return;
+            }
+            activeKey = pausedKey;
+            pausedKey = null;
+            lastSave = System.currentTimeMillis();
         }
-        if (!ChatTweaks.config.modEnabled || !ChatTweaks.config.saveChatHistory) {
+        if (!saving) {
+            save();
+            pausedKey = activeKey;
             activeKey = null;
             return;
         }
@@ -163,6 +175,7 @@ public final class ChatHistory {
     }
 
     private static void onStopping() {
+        pausedKey = null;
         if (activeKey != null) {
             save();
             activeKey = null;

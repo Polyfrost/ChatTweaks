@@ -13,6 +13,9 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +49,18 @@ public abstract class ChatHistoryMixin implements ChatHistoryAccess {
 
     @Shadow
     protected abstract void refreshTrimmedMessages();
+
+    // vanilla empties the chat without the mod's say when it is off or told not to keep it
+    //? if > 1.8.9 {
+    @Inject(method = "clearMessages", at = @At("HEAD"))
+    //?} else {
+    /*@Inject(method = "clear", at = @At("HEAD"))
+    *///?}
+    private void chattweaks$forgetCleared(CallbackInfo ci) {
+        chattweaks$markers.clear();
+        chattweaks$sessions.clear();
+        CompactChat.clear();
+    }
 
     @Override
     public boolean chattweaks$isEmpty() {
