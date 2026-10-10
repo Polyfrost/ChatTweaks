@@ -2,7 +2,6 @@ package org.polyfrost.chattweaks.config;
 
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.oneconfig.api.config.v1.Config;
-import org.polyfrost.oneconfig.api.config.v1.Property;
 import org.polyfrost.oneconfig.api.config.v1.annotations.Color;
 import org.polyfrost.oneconfig.api.config.v1.annotations.Dropdown;
 import org.polyfrost.oneconfig.api.config.v1.annotations.Slider;
@@ -20,10 +19,7 @@ public class ChatTweaksConfig extends Config {
     protected void initialize(boolean byConfigManager) {
         super.initialize(byConfigManager);
         if (tree != null) {
-            Property<Boolean> toggle = Property.recast(getProperty("modEnabled"));
-            tree.onAllProps((id, option) -> {
-                if (option != toggle) option.addDisplayCondition(toggle, false);
-            });
+            disableAllUnless("modEnabled");
             VanillaChatOptions.attach(tree);
         }
         hideIf("timestampsLeftBracket", () -> timestampsBrackets != 5);
