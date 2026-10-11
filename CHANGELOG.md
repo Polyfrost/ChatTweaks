@@ -1,2 +1,2 @@
-## 1.2.1
-- Added mod icon
+## 1.2.2
+- Add global mod toggling support
