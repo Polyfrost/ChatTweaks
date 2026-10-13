@@ -13,6 +13,8 @@ Repeated messages stack into one line with a counter like `(2)` instead of filli
 - 10 counter formats and a custom counter color
 - Only stack a message when it repeats the one right above it
 
+![Compact chat](.github/images/compact-chat.gif)
+
 ### Chat history
 
 - Keep up to 16384 messages instead of the vanilla 100
@@ -24,12 +26,16 @@ Repeated messages stack into one line with a counter like `(2)` instead of filli
 
 Hover over a link in chat to see the image next to your cursor. This works for web pages that have a preview image and for your own screenshots too. Hold Shift to see it at full size.
 
+![Image preview](.github/images/image-preview.gif)
+
 ### Timestamps
 
 - Show the time in front of each message, or only when you hover over it
 - 12 or 24 hour clock with optional seconds
 - Custom brackets and color
 - Only show the time when it changes
+
+![Timestamps](.github/images/timestamps.gif)
 
 ### Smaller tweaks
 
@@ -38,6 +44,8 @@ Hover over a link in chat to see the image next to your cursor. This works for w
 - Hold Shift while pressing Enter to keep the chat open
 - Fuzzy command autocomplete (not on 1.8.9)
 - Hide empty chat messages
+
+![Settings](.github/images/settings.gif)
 
 ## Compatibility
 
