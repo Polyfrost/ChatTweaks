@@ -5,6 +5,8 @@ package org.polyfrost.chattweaks.util;
 import net.minecraft.text.LiteralText;
 *///?}
 import net.minecraft.network.chat.Component;
+//? if >=1.21.10
+import net.minecraft.network.chat.FontDescription;
 import net.minecraft.network.chat.Style;
 //? if > 1.8.9
 import net.minecraft.resources.Identifier;
@@ -18,7 +20,7 @@ public final class Spacing {
     private static final int MAX_WIDTH = (1 << BITS) - 1;
 
     //? if >=1.21.10 {
-    private static final Style STYLE = Style.EMPTY.withFont(new net.minecraft.network.chat.FontDescription.Resource(FONT));
+    private static final Style STYLE = Style.EMPTY.withFont(new FontDescription.Resource(FONT));
     //?} elif > 1.8.9 {
     /*private static final Style STYLE = Style.EMPTY.withFont(FONT);
     *///?}

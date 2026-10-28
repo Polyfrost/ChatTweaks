@@ -6,10 +6,12 @@ import net.minecraft.client.multiplayer.chat.GuiMessage;
 /*import net.minecraft.client.GuiMessage;
 *///?}
 import net.minecraft.client.gui.components.ChatComponent;
-//? if = 1.8.9 {
-/*import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
+//? if = 1.8.9 || >=1.21.11 {
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.Mth;
+//?}
+//? if = 1.8.9 {
+/*import net.minecraft.network.chat.Component;
 import org.polyfrost.chattweaks.util.ChatLineParent;
 *///?}
 import org.jetbrains.annotations.Nullable;
@@ -150,17 +152,17 @@ public abstract class ChatHoverMixin implements HoveredUrl {
 
     @Unique
     private double chattweaks$screenToChatY(double d) {
-        double e = net.minecraft.client.Minecraft.getInstance().getWindow().getGuiScaledHeight() - d - 40.0;
+        double e = Minecraft.getInstance().getWindow().getGuiScaledHeight() - d - 40.0;
         return e / (this.getScale() * this.getLineHeight());
     }
 
     @Unique
     private int chattweaks$getMessageLineIndexAt(double d, double e) {
         if (this.isChatFocused() && !this.isChatHidden()) {
-            if (!(d < -4.0) && !(d > net.minecraft.util.Mth.floor(this.getWidth() / this.getScale()))) {
+            if (!(d < -4.0) && !(d > Mth.floor(this.getWidth() / this.getScale()))) {
                 int i = Math.min(this.getLinesPerPage(), this.trimmedMessages.size());
                 if (e >= 0.0 && e < i) {
-                    int j = net.minecraft.util.Mth.floor(e + this.chatScrollbarPos);
+                    int j = Mth.floor(e + this.chatScrollbarPos);
                     if (j >= 0 && j < this.trimmedMessages.size()) {
                         return j;
                     }
@@ -210,17 +212,17 @@ public abstract class ChatHoverMixin implements HoveredUrl {
 
     @Unique
     private double chattweaks$screenToChatY(double d) {
-        double e = net.minecraft.client.Minecraft.getInstance().getWindow().getGuiScaledHeight() - d - 40.0;
+        double e = Minecraft.getInstance().getWindow().getGuiScaledHeight() - d - 40.0;
         return e / (this.getScale() * this.getLineHeight());
     }
 
     @Unique
     private int chattweaks$getMessageLineIndexAt(double d, double e) {
         if (this.isChatFocused()) {
-            if (!(d < -4.0) && !(d > net.minecraft.util.Mth.floor(this.getWidth() / this.getScale()))) {
+            if (!(d < -4.0) && !(d > Mth.floor(this.getWidth() / this.getScale()))) {
                 int i = Math.min(this.getLinesPerPage(), this.trimmedMessages.size());
                 if (e >= 0.0 && e < i) {
-                    int j = net.minecraft.util.Mth.floor(e + this.chatScrollbarPos);
+                    int j = Mth.floor(e + this.chatScrollbarPos);
                     if (j >= 0 && j < this.trimmedMessages.size()) {
                         return j;
                     }

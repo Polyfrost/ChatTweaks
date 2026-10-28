@@ -11,6 +11,11 @@ import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?}
 //? if > 1.8.9
 import net.minecraft.client.gui.screens.inventory.tooltip.TooltipRenderUtil;
+//? if >=1.21.8 {
+import net.minecraft.client.renderer.RenderPipelines;
+//?} elif >=1.21.4 {
+/*import net.minecraft.client.renderer.RenderType;
+*///?}
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.resources.Identifier;
 import org.polyfrost.chattweaks.ChatTweaks;
@@ -306,9 +311,9 @@ public final class ImagePreview {
         if (drawHeight > 0) {
             int imageY = y + LINE_HEIGHT;
             //? if >=1.21.8 {
-            graphics.blit(net.minecraft.client.renderer.RenderPipelines.GUI_TEXTURED, entry.texture, x, imageY, 0F, 0F, drawWidth, drawHeight, entry.imageWidth, entry.imageHeight, entry.imageWidth, entry.imageHeight);
+            graphics.blit(RenderPipelines.GUI_TEXTURED, entry.texture, x, imageY, 0F, 0F, drawWidth, drawHeight, entry.imageWidth, entry.imageHeight, entry.imageWidth, entry.imageHeight);
             //?} elif >=1.21.4 {
-            /*graphics.blit(net.minecraft.client.renderer.RenderType::guiTextured, entry.texture, x, imageY, 0F, 0F, drawWidth, drawHeight, entry.imageWidth, entry.imageHeight, entry.imageWidth, entry.imageHeight);
+            /*graphics.blit(RenderType::guiTextured, entry.texture, x, imageY, 0F, 0F, drawWidth, drawHeight, entry.imageWidth, entry.imageHeight, entry.imageWidth, entry.imageHeight);
             *///?} else {
             /*graphics.blit(entry.texture, x, imageY, drawWidth, drawHeight, 0F, 0F, entry.imageWidth, entry.imageHeight, entry.imageWidth, entry.imageHeight);
             *///?}
