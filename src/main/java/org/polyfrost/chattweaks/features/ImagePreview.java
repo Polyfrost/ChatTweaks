@@ -451,7 +451,7 @@ public final class ImagePreview {
                 byte[] body = stream.readAllBytes();
                 NativeImage image = decode(body);
                 if (image == null) {
-                    byte[] transcoded = SkiaImageDecoder.toPng(body);
+                    byte[] transcoded = ImageTranscoder.toPng(body);
                     image = transcoded == null ? null : decode(transcoded);
                 }
                 if (image == null) {
