@@ -1,2 +1,2 @@
-## 1.2.2
-- Add global mod toggling support
+## 1.2.3
+- Fix compat with OneConfig 1.6.0
