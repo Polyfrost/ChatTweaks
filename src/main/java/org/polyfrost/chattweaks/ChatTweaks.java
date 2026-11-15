@@ -6,9 +6,8 @@ import org.polyfrost.chattweaks.config.ChatTweaksConfig;
 import org.polyfrost.chattweaks.features.ChatHistory;
 
 public class ChatTweaks implements ClientModInitializer {
-    public static final String ID = "@MOD_ID@";
-    public static final String NAME = "@MOD_NAME@";
-    public static final String VERSION = "@MOD_VERSION@";
+    public static final String ID = "chattweaks";
+    public static final String NAME = "ChatTweaks";
 
     public static ChatTweaksConfig config;
 
