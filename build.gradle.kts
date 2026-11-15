@@ -12,6 +12,7 @@ plugins {
     id("ploceus") version "1.17.4" apply false
     id("me.modmuss50.mod-publish-plugin") version "2.2.0"
     id("net.ltgt.errorprone") version "5.1.1"
+    checkstyle
 }
 
 val isOrnithe = stonecutter.current.version == "1.8.9"
@@ -113,6 +114,10 @@ tasks.withType<JavaCompile>().configureEach {
         disableAllChecks = true
         error("UnnecessarilyFullyQualified")
     }
+}
+
+tasks.named<JavaCompile>("compileJava") {
+    finalizedBy("checkstyleMain")
 }
 
 loom {
