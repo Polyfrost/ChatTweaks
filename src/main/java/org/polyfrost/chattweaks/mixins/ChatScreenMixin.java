@@ -56,7 +56,7 @@ public abstract class ChatScreenMixin implements ChatInputAccess {
     //? if > 1.8.9 {
     @Inject(method = "normalizeChatMessage", at = @At("HEAD"), cancellable = true)
     private void chattweaks$keepLongCommands(String message, CallbackInfoReturnable<String> cir) {
-        if (!ChatTweaks.config.modEnabled || !ChatTweaks.config.bypassCommandLimit) {
+        if (!ChatTweaks.config.modEnabled || !ChatTweaks.config.allowLongCommands) {
             return;
         }
         String normalized = ChatUtils.normalizeUntrimmed(message);
