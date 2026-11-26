@@ -3,6 +3,7 @@ package org.polyfrost.chattweaks.mixins;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.ChatScreen;
 import org.polyfrost.chattweaks.ChatTweaks;
+import org.polyfrost.chattweaks.features.CommandLengthLimit;
 import org.polyfrost.chattweaks.util.ChatCompat;
 import org.polyfrost.chattweaks.util.ChatInputAccess;
 import org.polyfrost.chattweaks.util.ChatUtils;
@@ -44,6 +45,6 @@ public abstract class EditBoxMixin {
         if (((ChatInputAccess) screen).chattweaks$getInput() != (Object) this) {
             return;
         }
-        this.maxLength = command ? ChatUtils.COMMAND_LIMIT : ChatUtils.VANILLA_CHAT_LIMIT;
+        this.maxLength = command ? CommandLengthLimit.get() : ChatUtils.VANILLA_CHAT_LIMIT;
     }
 }
