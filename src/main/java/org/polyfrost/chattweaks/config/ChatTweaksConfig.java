@@ -207,7 +207,7 @@ public class ChatTweaksConfig extends Config {
             description = "Let commands go past the 256 character limit vanilla puts on chat.",
             subcategory = "Commands"
     )
-    public boolean allowLongCommands;
+    public boolean bypassCommandLimit = true;
 
     //? if > 1.8.9 {
     @Switch(
