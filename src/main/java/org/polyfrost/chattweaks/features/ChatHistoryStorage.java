@@ -105,15 +105,17 @@ public final class ChatHistoryStorage {
                 if (message == null) {
                     continue;
                 }
+                JsonElement countElement = entry.get("count");
+                int count = countElement != null && countElement.isJsonPrimitive() ? Math.max(1, countElement.getAsInt()) : 1;
                 //? if > 1.8.9 {
                 ComponentSerialization.CODEC.parse(ops, message)
                         .result()
-                        .ifPresent(component -> out.add(ChatHistoryEntry.message(component)));
+                        .ifPresent(component -> out.add(ChatHistoryEntry.message(component, count)));
                 //?} else {
                 /*try {
                     Component component = Component.Serializer.fromJson(message.toString());
                     if (component != null) {
-                        out.add(ChatHistoryEntry.message(component));
+                        out.add(ChatHistoryEntry.message(component, count));
                     }
                 } catch (JsonParseException ignored) {
                 }
@@ -153,6 +155,9 @@ public final class ChatHistoryStorage {
                 }
                 writer.beginObject().name("message");
                 GSON.toJson(message, writer);
+                if (entry.count() > 1) {
+                    writer.name("count").value(entry.count());
+                }
                 writer.endObject();
             }
             writer.endArray();
