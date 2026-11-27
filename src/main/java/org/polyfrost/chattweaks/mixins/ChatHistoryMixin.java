@@ -72,6 +72,7 @@ public abstract class ChatHistoryMixin implements ChatHistoryAccess {
         List<ChatHistoryEntry> entries = new ArrayList<>(this.allMessages.size());
         Set<GuiMessage> markers = Collections.newSetFromMap(new IdentityHashMap<>());
         Map<GuiMessage, Long> sessions = new IdentityHashMap<>();
+        Map<GuiMessage, Integer> counts = CompactChat.counts();
 
         for (int i = this.allMessages.size() - 1; i >= 0; i--) {
             GuiMessage message = this.allMessages.get(i);
@@ -79,7 +80,7 @@ public abstract class ChatHistoryMixin implements ChatHistoryAccess {
                 markers.add(message);
                 continue;
             }
-            entries.add(ChatHistoryEntry.message(message.content()));
+            entries.add(ChatHistoryEntry.message(message.content(), counts.getOrDefault(message, 1)));
             Long session = chattweaks$sessions.get(message);
             if (session != null) {
                 entries.add(ChatHistoryEntry.session(session));
@@ -118,12 +119,16 @@ public abstract class ChatHistoryMixin implements ChatHistoryAccess {
         List<GuiMessage> lines = new ArrayList<>(restored.size());
         Set<GuiMessage> markers = Collections.newSetFromMap(new IdentityHashMap<>());
         Map<GuiMessage, Long> sessions = new IdentityHashMap<>();
+        Map<GuiMessage, Integer> counts = new IdentityHashMap<>();
         GuiMessage previous = null;
 
         for (ChatHistoryEntry entry : restored) {
             if (!entry.isSession()) {
                 previous = chattweaks$line(entry.message(), addedTime);
                 lines.add(previous);
+                if (entry.count() > 1) {
+                    counts.put(previous, entry.count());
+                }
                 continue;
             }
             if (previous == null) {
@@ -154,12 +159,24 @@ public abstract class ChatHistoryMixin implements ChatHistoryAccess {
         }
         for (int i = lines.size() - 1; i >= 0; i--) {
             GuiMessage line = lines.get(i);
-            String key = ChatUtils.compactKey(line.content(), line.content().getString());
+            int count = counts.getOrDefault(line, 1);
+            String key = ChatUtils.compactKey(line.content(), chattweaks$withoutCounter(line.content(), count));
             if (!key.isEmpty()) {
-                CompactChat.track(key, line);
+                CompactChat.track(key, line, count);
             }
         }
         this.allMessages.addAll(lines);
+    }
+
+    @Unique
+    private static String chattweaks$withoutCounter(Component content, int count) {
+        String raw = content.getString();
+        List<Component> siblings = content.getSiblings();
+        if (count <= 1 || siblings.isEmpty()) {
+            return raw;
+        }
+        String counter = siblings.getLast().getString();
+        return raw.endsWith(counter) ? raw.substring(0, raw.length() - counter.length()) : raw;
     }
 
     @Unique

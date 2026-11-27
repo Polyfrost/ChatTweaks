@@ -306,14 +306,14 @@ public abstract class ChatComponentMixin {
     @Unique
     private Component chattweaks$applyCompact(Component component, @Nullable String key) {
         if (key == null) {
-            CompactChat.expect(null, null);
+            CompactChat.expect(null, null, 1);
             return component;
         }
 
         long now = System.currentTimeMillis();
         long window = ChatTweaks.config.compactChatTime * 1000L;
         GuiMessage found = CompactChat.touch(key, now, window);
-        CompactChat.expect(key, component);
+        CompactChat.expect(key, component, 1);
 
         if (found == null) {
             return component;
@@ -326,7 +326,7 @@ public abstract class ChatComponentMixin {
             return component;
         }
 
-        int count = ChatUtils.extractCount(found.content().getString()) + 1;
+        int count = CompactChat.count(key) + 1;
         chattweaks$untrim(found, dropped);
 
         int rgb = ChatTweaks.config.compactChatColor.getRGB() & 0xFFFFFF;
@@ -337,7 +337,7 @@ public abstract class ChatComponentMixin {
         /*Component stacked = component.copy().append(new LiteralText(ChatUtils.formatCount(count))
                 .setStyle(new Style().setColor(ChatUtils.nearestFormatting(rgb))));
         *///?}
-        CompactChat.expect(key, stacked);
+        CompactChat.expect(key, stacked, count);
         return stacked;
     }
 }
