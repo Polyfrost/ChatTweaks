@@ -23,6 +23,15 @@ import net.minecraft.client.input.KeyEvent;
 //?} else {
 /*import net.minecraft.client.gui.screens.Screen;
 *///?}
+//? if = 1.8.9 {
+/*import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.ClientPacketListener;
+import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
+
+import java.util.Locale;
+import java.util.regex.Pattern;
+*///?}
 
 @Mixin(ChatScreen.class)
 public abstract class ChatScreenMixin implements ChatInputAccess {
@@ -98,4 +107,30 @@ public abstract class ChatScreenMixin implements ChatInputAccess {
         }
     }
     //?}
+
+    //? if = 1.8.9 {
+    /*@Unique
+    private static final Pattern chattweaks$USERNAME = Pattern.compile("[A-Za-z0-9_]{1,16}");
+
+    @ModifyVariable(method = "setMessageHistory", at = @At("HEAD"), argsOnly = true)
+    private String[] chattweaks$completePlayerNames(String[] completions) {
+        if (completions.length > 0 || ChatTweaks.config == null || !ChatTweaks.config.modEnabled || !ChatTweaks.config.commandPlayerNames) {
+            return completions;
+        }
+        String value = input.getValue();
+        int cursor = input.getCursor();
+        int wordStart = input.getWordSkipPosition(-1, cursor, false);
+        ClientPacketListener connection = Minecraft.getInstance().getConnection();
+        if (!ChatUtils.isCommand(value) || wordStart <= 0 || wordStart > cursor || connection == null) {
+            return completions;
+        }
+        String word = value.substring(wordStart, cursor).toLowerCase(Locale.ROOT);
+        return connection.getOnlinePlayers().stream()
+                .map(info -> info.getProfile().getName())
+                .filter(name -> chattweaks$USERNAME.matcher(name).matches())
+                .filter(name -> name.toLowerCase(Locale.ROOT).startsWith(word))
+                .sorted(String.CASE_INSENSITIVE_ORDER)
+                .toArray(String[]::new);
+    }
+    *///?}
 }

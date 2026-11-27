@@ -216,7 +216,14 @@ public class ChatTweaksConfig extends Config {
             subcategory = "Commands"
     )
     public boolean fuzzyAutocomplete = false;
-    //?}
+    //?} else {
+    /*@Switch(
+            title = "Complete Player Names in Commands",
+            description = "Tab complete online player names in commands when the server suggests nothing.",
+            subcategory = "Commands"
+    )
+    public boolean commandPlayerNames = true;
+    *///?}
 
     @Switch(
             title = "Safe Chat Clicks",
