@@ -11,7 +11,6 @@ import org.polyfrost.chattweaks.ChatTweaks;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public final class ChatUtils {
@@ -23,7 +22,6 @@ public final class ChatUtils {
     private static final Pattern WHITESPACE = Pattern.compile("\\s+");
     private static final int MIN_FUZZY_LENGTH = 3;
     private static final Pattern TIMESTAMP = Pattern.compile("(?i)^\\S{0,3}?\\d\\d?:\\d\\d(?::\\d\\d)?(?: ?[AP]M)?\\S{0,3}? ");
-    private static final Pattern COUNTER = Pattern.compile(" (?:[(\\[{<]x?(\\d+)x?[)\\]}>]|x(\\d+)|(\\d+)x)\\s*$");
     private static final String[] COUNTER_BRACKETS = {"()", "[]", "{}", "<>", "()", "[]", "{}", "<>"};
     private static final String[] TIMESTAMP_BRACKETS = {"[]", "()", "{}", "<>"};
     private static final char COLOR_CHAR = '§';
@@ -209,39 +207,7 @@ public final class ChatUtils {
 
     public static String compactKey(String raw) {
         String clean = Spacing.strip(cleanColor(raw));
-        clean = TIMESTAMP.matcher(clean).replaceAll("");
-        if (endsLikeCounter(clean)) {
-            clean = COUNTER.matcher(clean).replaceAll("");
-        }
-        return clean.trim();
-    }
-
-    private static boolean endsLikeCounter(String clean) {
-        for (int i = clean.length() - 1; i >= 0; i--) {
-            char c = clean.charAt(i);
-            if (Character.isWhitespace(c) || isLineTerminator(c)) {
-                continue;
-            }
-            return c == ')' || c == ']' || c == '}' || c == '>' || c == 'x' || c == 'X'
-                    || (c >= '0' && c <= '9');
-        }
-        return false;
-    }
-
-    public static int extractCount(String raw) {
-        Matcher m = COUNTER.matcher(cleanColor(raw));
-        if (m.find()) {
-            for (int i = 1; i <= m.groupCount(); i++) {
-                if (m.group(i) == null) {
-                    continue;
-                }
-                try {
-                    return Integer.parseInt(m.group(i));
-                } catch (NumberFormatException ignored) {
-                }
-            }
-        }
-        return 1;
+        return TIMESTAMP.matcher(clean).replaceAll("").trim();
     }
 
     public static String formatCount(int count) {
