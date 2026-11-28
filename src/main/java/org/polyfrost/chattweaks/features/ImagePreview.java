@@ -12,6 +12,7 @@ import net.minecraft.client.gui.Font;
 *///?} else {
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 //?}
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.ChatScreen;
 //? if > 1.8.9 {
 import net.minecraft.client.gui.screens.ConfirmScreen;
@@ -29,12 +30,14 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 //? if > 1.8.9
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import org.jetbrains.annotations.Nullable;
 import org.polyfrost.chattweaks.ChatTweaks;
 import org.polyfrost.chattweaks.util.ChatCompat;
 import org.polyfrost.chattweaks.util.ChatInputAccess;
 import org.polyfrost.chattweaks.util.HoveredUrl;
 //? if = 1.8.9 {
-/*import org.polyfrost.oneconfig.api.event.v1.EventManager;
+/*import org.lwjgl.input.Keyboard;
+import org.polyfrost.oneconfig.api.event.v1.EventManager;
 import org.polyfrost.oneconfig.api.event.v1.events.TickEvent;
 *///?}
 
@@ -140,7 +143,7 @@ public final class ImagePreview {
         if (url == null) {
             return;
         }
-        handle(mc, graphics, url, mouseX, mouseY, controlPressed);
+        handle(mc, graphics, url, mouseX, mouseY, controlDown, controlPressed);
     }
 
     public static void init() {
@@ -151,9 +154,9 @@ public final class ImagePreview {
     }
 
     //? if <26.1 {
-    /*private static void handle(Minecraft mc, GuiGraphics graphics, String value, int mouseX, int mouseY, boolean controlPressed) {
+    /*private static void handle(Minecraft mc, GuiGraphics graphics, String value, int mouseX, int mouseY, boolean controlDown, boolean controlPressed) {
     *///?} else {
-    private static void handle(Minecraft mc, GuiGraphicsExtractor graphics, String value, int mouseX, int mouseY, boolean controlPressed) {
+    private static void handle(Minecraft mc, GuiGraphicsExtractor graphics, String value, int mouseX, int mouseY, boolean controlDown, boolean controlPressed) {
     //?}
         boolean remote = value.startsWith("http");
         if (remote) {
@@ -177,18 +180,20 @@ public final class ImagePreview {
             }
             CACHE.put(value, entry);
             if (remote) {
-                request(entry, value, 0, false);
+                request(entry, value, 0, null);
             } else {
                 final Preview target = entry;
                 CompletableFuture.runAsync(() -> loadFile(target));
             }
         } else if (entry.state == STATE_BLOCKED) {
-            if (!ChatTweaks.config.imagePreviewWarningAccepted) {
+            if (isTrusted(entry.blockedUrl)) {
+                request(entry, entry.blockedUrl, entry.blockedHop, null);
+            } else if (!ChatTweaks.config.imagePreviewWarningAccepted) {
                 if (controlPressed) {
                     promptFor = entry;
                 }
-            } else if (controlPressed) {
-                request(entry, entry.blockedUrl, entry.blockedHop, true);
+            } else if (controlDown) {
+                request(entry, entry.blockedUrl, entry.blockedHop, entry.blockedHost);
             }
         }
 
@@ -215,7 +220,14 @@ public final class ImagePreview {
                 Component.literal(title), Component.literal(message), Component.literal("Agree and load"), Component.literal("Cancel"));
         //?} else {
         /*ConfirmScreen screen = new ConfirmScreen((agreed, id) -> answerPrompt(entry, agreed, previous, draft),
-                title, message, "Agree and load", "Cancel", 0);
+                title, message, "Agree and load", "Cancel", 0) {
+            @Override
+            protected void keyPressed(char typedChar, int keyCode) {
+                if (keyCode == Keyboard.KEY_ESCAPE) {
+                    answerPrompt(entry, false, previous, draft);
+                }
+            }
+        };
         *///?}
         ChatCompat.setScreen(screen);
         //? if > 1.8.9 {
@@ -229,11 +241,14 @@ public final class ImagePreview {
             ChatTweaks.config.imagePreviewWarningAccepted = true;
             ChatTweaks.config.save();
             if (entry.state == STATE_BLOCKED) {
-                request(entry, entry.blockedUrl, entry.blockedHop, true);
+                request(entry, entry.blockedUrl, entry.blockedHop, entry.blockedHost);
             }
         }
         ChatCompat.setScreen(previous);
-        ((ChatInputAccess) previous).chattweaks$getInput().setValue(draft);
+        EditBox input = ((ChatInputAccess) previous).chattweaks$getInput();
+        input.setValue(draft);
+        //? if >=26.3
+        previous.setFocused(input);
     }
 
     private static void consumePending(Minecraft mc, Preview entry) {
@@ -361,7 +376,8 @@ public final class ImagePreview {
             footer = message == null ? "Could not load image" : message;
             footerColor = COLOR_ERROR;
         } else if (entry.state == STATE_BLOCKED) {
-            warning = fit(font, "Loading shares your IP with " + entry.blockedHost, maxContentWidth);
+            String prefix = "Loading shares your IP with ";
+            warning = prefix + fitStart(font, entry.blockedHost, maxContentWidth - font.width(prefix));
             footer = ChatTweaks.config.imagePreviewWarningAccepted
                     ? "Hold " + ChatCompat.controlKeyName() + " to load"
                     : "Press " + ChatCompat.controlKeyName() + " to review and load";
@@ -455,6 +471,17 @@ public final class ImagePreview {
         return builder + "…";
     }
 
+    private static String fitStart(Font font, String value, int maxWidth) {
+        if (font.width(value) <= maxWidth) {
+            return value;
+        }
+        StringBuilder builder = new StringBuilder(value);
+        while (builder.length() > 1 && font.width("…" + builder) > maxWidth) {
+            builder.deleteCharAt(0);
+        }
+        return "…" + builder;
+    }
+
     private static int clamp(int value, int min, int max) {
         return Math.max(min, Math.min(max, value));
     }
@@ -497,26 +524,34 @@ public final class ImagePreview {
         }
     }
 
-    private static void request(Preview entry, String url, int hop, boolean confirmed) {
-        if (!confirmed && !isTrusted(url)) {
+    private static void request(Preview entry, String url, int hop, @Nullable String approvedHost) {
+        if (!allowed(url, approvedHost)) {
             block(entry, url, hop);
             return;
         }
         entry.state = STATE_LOADING;
-        CompletableFuture.runAsync(() -> loadUrl(entry, url, hop, confirmed));
+        CompletableFuture.runAsync(() -> loadUrl(entry, url, hop, approvedHost));
+    }
+
+    private static boolean allowed(String url, @Nullable String approvedHost) {
+        return isTrusted(url) || (approvedHost != null && approvedHost.equals(host(url)));
+    }
+
+    @Nullable
+    private static String host(String url) {
+        try {
+            String host = new URI(url).getHost();
+            return host == null || host.isEmpty() ? null : host.toLowerCase(Locale.ROOT);
+        } catch (URISyntaxException e) {
+            return null;
+        }
     }
 
     private static boolean isTrusted(String url) {
-        String host;
-        try {
-            host = new URI(url).getHost();
-        } catch (URISyntaxException e) {
+        String host = host(url);
+        if (host == null) {
             return false;
         }
-        if (host == null || host.isEmpty()) {
-            return false;
-        }
-        host = host.toLowerCase(Locale.ROOT);
         String list = ChatTweaks.config.imagePreviewTrustedHosts;
         if (list == null) {
             return false;
@@ -533,18 +568,18 @@ public final class ImagePreview {
     }
 
     private static void block(Preview entry, String url, int hop) {
-        String host = null;
-        try {
-            host = new URI(url).getHost();
-        } catch (URISyntaxException ignored) {
+        String host = host(url);
+        if (host == null) {
+            fail(entry, "Could not load image");
+            return;
         }
         entry.blockedUrl = url;
         entry.blockedHop = hop;
-        entry.blockedHost = host == null ? "link" : host;
+        entry.blockedHost = host;
         entry.state = STATE_BLOCKED;
     }
 
-    private static void loadUrl(Preview entry, String url, int hop, boolean confirmed) {
+    private static void loadUrl(Preview entry, String url, int hop, @Nullable String approvedHost) {
         if (hop > MAX_HOPS) {
             fail(entry, "Too many redirects");
             return;
@@ -558,8 +593,12 @@ public final class ImagePreview {
                 fail(entry, "Could not load image");
                 return;
             }
-            if (!confirmed && !isTrusted(url)) {
-                block(entry, url, hop);
+            if (!allowed(url, approvedHost)) {
+                if (approvedHost != null) {
+                    fail(entry, "Could not load image");
+                } else {
+                    block(entry, url, hop);
+                }
                 return;
             }
             URL u = uri.toURL();
@@ -584,7 +623,7 @@ public final class ImagePreview {
                 }
                 String target = new URI(url).resolve(location).toString();
                 connection.disconnect();
-                loadUrl(entry, target, hop + 1, confirmed);
+                loadUrl(entry, target, hop + 1, approvedHost);
                 return;
             }
             if (code >= 400) {
@@ -599,7 +638,7 @@ public final class ImagePreview {
                     if (imageURL != null) {
                         String target = new URI(url).resolve(imageURL).toString();
                         connection.disconnect();
-                        loadUrl(entry, target, hop + 1, confirmed);
+                        loadUrl(entry, target, hop + 1, approvedHost);
                         return;
                     }
                     fail(entry, "No image on that page");

@@ -9,7 +9,7 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import org.jetbrains.annotations.Nullable;
 
-//? if <26.3
+//? if <=1.21.10
 //import java.util.Locale;
 
 public final class ChatCompat {
@@ -93,7 +93,7 @@ public final class ChatCompat {
     }
 
     public static String controlKeyName() {
-        //? if <26.3 {
+        //? if <=1.21.10 {
         /*if (System.getProperty("os.name", "").toLowerCase(Locale.ROOT).contains("mac")) {
             return "Cmd";
         }
