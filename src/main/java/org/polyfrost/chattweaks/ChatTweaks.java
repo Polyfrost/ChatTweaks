@@ -4,6 +4,7 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.loader.api.FabricLoader;
 import org.polyfrost.chattweaks.config.ChatTweaksConfig;
 import org.polyfrost.chattweaks.features.ChatHistory;
+import org.polyfrost.chattweaks.features.ImagePreview;
 
 public class ChatTweaks implements ClientModInitializer {
     public static final String ID = "chattweaks";
@@ -15,5 +16,6 @@ public class ChatTweaks implements ClientModInitializer {
     public void onInitializeClient() {
         config = new ChatTweaksConfig();
         ChatHistory.init();
+        ImagePreview.init();
     }
 }

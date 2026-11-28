@@ -9,6 +9,9 @@ import net.minecraft.network.chat.HoverEvent;
 import net.minecraft.network.chat.Style;
 import org.jetbrains.annotations.Nullable;
 
+//? if <26.3
+//import java.util.Locale;
+
 public final class ChatCompat {
     @Nullable
     public static String safeClickValue(ClickEvent event) {
@@ -76,6 +79,36 @@ public final class ChatCompat {
         return Minecraft.getInstance().hasShiftDown();
         //?} else {
         /*return Screen.hasShiftDown();
+        *///?}
+    }
+
+    public static boolean isControlDown() {
+        //? if >=1.21.10 {
+        return Minecraft.getInstance().hasControlDown();
+        //?} elif > 1.8.9 {
+        /*return Screen.hasControlDown();
+        *///?} else {
+        /*return Screen.isControlDown();
+        *///?}
+    }
+
+    public static String controlKeyName() {
+        //? if <26.3 {
+        /*if (System.getProperty("os.name", "").toLowerCase(Locale.ROOT).contains("mac")) {
+            return "Cmd";
+        }
+        *///?}
+        return "Ctrl";
+    }
+
+    public static void setScreen(@Nullable Screen screen) {
+        Minecraft mc = Minecraft.getInstance();
+        //? if >=26.2 {
+        mc.gui.setScreen(screen);
+        //?} elif > 1.8.9 {
+        /*mc.setScreen(screen);
+        *///?} else {
+        /*mc.openScreen(screen);
         *///?}
     }
 
