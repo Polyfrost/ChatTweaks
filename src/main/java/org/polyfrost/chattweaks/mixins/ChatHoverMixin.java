@@ -12,15 +12,38 @@ import net.minecraft.util.Mth;
 //?}
 //? if = 1.8.9 {
 /*import net.minecraft.network.chat.Component;
+import org.lwjgl.BufferUtils;
+import org.lwjgl.opengl.GL11;
 import org.polyfrost.chattweaks.util.ChatLineParent;
 *///?}
+//? if >=26.1 {
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+//?} elif >=1.21.11 {
+/*import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+*///?} elif > 1.8.9 {
+/*import net.minecraft.client.gui.GuiGraphics;
+*///?}
+//? if > 1.8.9 && <1.21.6
+//import org.joml.Matrix4f;
 import org.jetbrains.annotations.Nullable;
 import org.polyfrost.chattweaks.util.HoveredUrl;
 import org.polyfrost.chattweaks.util.Spacing;
+//? if > 1.8.9 {
+import org.joml.Matrix3x2f;
+import org.joml.Vector2f;
+//?}
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+//? if = 1.8.9
+//import java.nio.FloatBuffer;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -68,14 +91,49 @@ public abstract class ChatHoverMixin implements HoveredUrl {
     public abstract boolean isChatFocused();
 
     @Unique
+    private final FloatBuffer chattweaks$modelView = BufferUtils.createFloatBuffer(16);
+
+    @Unique
+    private boolean chattweaks$poseCaptured;
+
+    @Unique
+    private float chattweaks$poseScaleX;
+
+    @Unique
+    private float chattweaks$poseScaleY;
+
+    @Unique
+    private float chattweaks$poseX;
+
+    @Unique
+    private float chattweaks$poseY;
+
+    @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/platform/GlStateManager;translatef(FFF)V", ordinal = 0))
+    private void chattweaks$captureChatPose(int ticks, CallbackInfo ci) {
+        chattweaks$modelView.clear();
+        GL11.glGetFloat(GL11.GL_MODELVIEW_MATRIX, chattweaks$modelView);
+        chattweaks$poseScaleX = chattweaks$modelView.get(0);
+        chattweaks$poseScaleY = chattweaks$modelView.get(5);
+        chattweaks$poseX = chattweaks$modelView.get(12);
+        chattweaks$poseY = chattweaks$modelView.get(13);
+        chattweaks$poseCaptured = true;
+    }
+
+    @Unique
     private int chattweaks$getMessageLineIndexAt(double mouseX, double mouseY) {
         if (!this.isChatFocused()) {
             return -1;
         }
         Minecraft mc = Minecraft.getInstance();
+        double localX = mouseX;
+        double localY = mouseY - (mc.getWindow().getGuiScaledHeight() - 48);
+        if (chattweaks$poseCaptured && chattweaks$poseScaleX != 0F && chattweaks$poseScaleY != 0F) {
+            localX = (mouseX - chattweaks$poseX) / chattweaks$poseScaleX;
+            localY = (mouseY - chattweaks$poseY) / chattweaks$poseScaleY;
+        }
         float scale = this.getScale();
-        int x = Mth.floor((float) (mouseX - 3) / scale);
-        int y = Mth.floor((float) (mc.getWindow().getGuiScaledHeight() - mouseY - 27) / scale);
+        int x = Mth.floor((float) (localX - 3) / scale);
+        int y = Mth.floor((float) (21 - localY) / scale);
         if (x < 0 || y < 0 || x > Mth.floor(this.getWidth() / scale)) {
             return -1;
         }
@@ -245,6 +303,34 @@ public abstract class ChatHoverMixin implements HoveredUrl {
     @Nullable
     private String chattweaks$cachedUrl;
 
+    //? if > 1.8.9 {
+    @Unique
+    private final Matrix3x2f chattweaks$chatPose = new Matrix3x2f();
+
+    //? if >=26.1 {
+    @Inject(method = "extractRenderState(Lnet/minecraft/client/gui/GuiGraphicsExtractor;Lnet/minecraft/client/gui/Font;IIILnet/minecraft/client/gui/components/ChatComponent$DisplayMode;Z)V", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;pushMatrix()Lorg/joml/Matrix3x2fStack;", ordinal = 0, remap = false))
+    private void chattweaks$captureChatPose(GuiGraphicsExtractor graphics, Font font, int ticks, int mouseX, int mouseY, ChatComponent.DisplayMode mode, boolean changeCursor, CallbackInfo ci) {
+        chattweaks$chatPose.set(graphics.pose());
+    }
+    //?} elif >=1.21.11 {
+    /*@Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;Lnet/minecraft/client/gui/Font;IIIZZ)V", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;pushMatrix()Lorg/joml/Matrix3x2fStack;", ordinal = 0, remap = false))
+    private void chattweaks$captureChatPose(GuiGraphics graphics, Font font, int ticks, int mouseX, int mouseY, boolean focused, boolean changeCursor, CallbackInfo ci) {
+        chattweaks$chatPose.set(graphics.pose());
+    }
+    *///?} elif >=1.21.6 {
+    /*@Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;IIIZ)V", at = @At(value = "INVOKE", target = "Lorg/joml/Matrix3x2fStack;pushMatrix()Lorg/joml/Matrix3x2fStack;", ordinal = 0, remap = false))
+    private void chattweaks$captureChatPose(GuiGraphics graphics, int ticks, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
+        chattweaks$chatPose.set(graphics.pose());
+    }
+    *///?} else {
+    /*@Inject(method = "render(Lnet/minecraft/client/gui/GuiGraphics;IIIZ)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/PoseStack;pushPose()V", ordinal = 0))
+    private void chattweaks$captureChatPose(GuiGraphics graphics, int ticks, int mouseX, int mouseY, boolean focused, CallbackInfo ci) {
+        Matrix4f pose = graphics.pose().last().pose();
+        chattweaks$chatPose.set(pose.m00(), pose.m01(), pose.m10(), pose.m11(), pose.m30(), pose.m31());
+    }
+    *///?}
+    //?}
+
     @Unique
     private String chattweaks$message(int index) {
         //? if >=26.1 {
@@ -271,6 +357,11 @@ public abstract class ChatHoverMixin implements HoveredUrl {
     @Override
     @Nullable
     public String chattweaks$hoveredUrl(double mouseX, double mouseY) {
+        //? if > 1.8.9 {
+        Vector2f local = chattweaks$chatPose.invert(new Matrix3x2f()).transformPosition((float) mouseX, (float) mouseY, new Vector2f());
+        mouseX = local.x;
+        mouseY = local.y;
+        //?}
         //? if = 1.8.9 {
         /*int index = chattweaks$getMessageLineIndexAt(mouseX, mouseY);
         *///?} elif <1.21.11 {

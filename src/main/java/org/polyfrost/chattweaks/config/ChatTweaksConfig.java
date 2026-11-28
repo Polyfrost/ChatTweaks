@@ -235,10 +235,26 @@ public class ChatTweaksConfig extends Config {
     @Switch(
             title = "Image Preview",
             description = "Preview image links when hovering over a supported URL." +
+                    "\nLinks to sites outside the trusted list only load after you hold the key shown in the preview, so senders cannot see your IP address just because you hovered." +
                     "\nHold Shift to fit the preview to the window.",
             subcategory = "Image Preview"
     )
     public boolean imagePreview = true;
+
+    @Text(
+            title = "Image Preview Trusted Sites",
+            description = "Comma separated sites that load previews on hover without asking first. Subdomains are included. Every redirect must also stay on these sites.",
+            subcategory = "Image Preview",
+            placeholder = "imgur.com, cdn.discordapp.com"
+    )
+    public String imagePreviewTrustedHosts = "imgur.com, cdn.discordapp.com, media.discordapp.net";
+
+    @Switch(
+            title = "Image Preview IP Warning Accepted",
+            description = "Turns on once you agree to the warning that loading images from sites outside the trusted list shares your IP address with them. Turn it off to see the warning again.",
+            subcategory = "Image Preview"
+    )
+    public boolean imagePreviewWarningAccepted = false;
 
     @Slider(
             title = "Image Preview Width",
